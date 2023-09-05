@@ -259,7 +259,6 @@ void CardReader::selectByIndex(MediaFile dir, const int16_t index) {
 //
 // Get file/folder info for an item by name
 //
-
 void CardReader::selectByName(MediaFile dir, const char * const match) {
   dir_t p;
   for (uint8_t cnt = 0; dir.readDir(&p, longFilename) > 0; cnt++) {

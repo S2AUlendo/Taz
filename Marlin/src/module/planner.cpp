@@ -2502,9 +2502,10 @@ bool Planner::_populate_block(
         else {
           // Scale E acceleration so that it will be possible to jump to the advance speed.
           const uint32_t max_accel_steps_per_s2 = MAX_E_JERK(extruder) / (extruder_advance_K[E_INDEX_N(extruder)] * e_D_ratio) * steps_per_mm;
-          if (TERN0(LA_DEBUG, accel > max_accel_steps_per_s2))
-            SERIAL_ECHOLNPGM("Acceleration limited.");
-          NOMORE(accel, max_accel_steps_per_s2);
+          //if (TERN0(LA_DEBUG, accel > max_accel_steps_per_s2))
+          //   SERIAL_ECHOLNPGM("Acceleration limited.");
+
+          //NOMORE(accel, max_accel_steps_per_s2);
         }
       }
     #endif
