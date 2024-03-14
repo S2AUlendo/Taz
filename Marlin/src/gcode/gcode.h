@@ -76,6 +76,7 @@
  *
  * M0   - Unconditional stop - Wait for user to press a button on the LCD (Only if ULTRA_LCD is enabled)
  * M1   -> M0
+ * M2   - Go to end print screen
  * M3   - Turn ON Laser | Spindle (clockwise), set Power | Speed. (Requires SPINDLE_FEATURE or LASER_FEATURE)
  * M4   - Turn ON Laser | Spindle (counter-clockwise), set Power | Speed. (Requires SPINDLE_FEATURE or LASER_FEATURE)
  * M5   - Turn OFF Laser | Spindle. (Requires SPINDLE_FEATURE or LASER_FEATURE)
@@ -128,7 +129,7 @@
  * M84  - Disable steppers until next move, or use S<seconds> to specify an idle
  *        duration after which steppers should turn off. S0 disables the timeout.
  * M85  - Set inactivity shutdown timer with parameter S<seconds>. To disable set zero (default)
- * M92  - Set planner.settings.axis_steps_per_mm for one or more axes.
+ * M92  - Set planner.settings.axis_steps_per_mm for one or more axes. (Requires EDITABLE_STEPS_PER_UNIT)
  *
  * M100 - Watch Free Memory (for debugging) (Requires M100_FREE_MEMORY_WATCHER)
  *
@@ -149,7 +150,7 @@
  *
  * M113 - Get or set the timeout interval for Host Keepalive "busy" messages. (Requires HOST_KEEPALIVE_FEATURE)
  * M114 - Report current position.
- * M115 - Report capabilities. (Extended capabilities requires EXTENDED_CAPABILITIES_REPORT)
+ * M115 - Report capabilities. (Requires CAPABILITIES_REPORT)
  * M117 - Display a message on the controller screen. (Requires an LCD)
  * M118 - Display a message in the host console.
  *
@@ -259,6 +260,7 @@
  * M554 - Get or set IP gateway. (Requires enabled Ethernet port)
  * M569 - Enable stealthChop on an axis. (Requires at least one _DRIVER_TYPE to be TMC2130/2160/2208/2209/5130/5160)
  * M575 - Change the serial baud rate. (Requires BAUD_RATE_GCODE)
+ * M592 - Get or set nonlinear extrusion parameters. (Requires NONLINEAR_EXTRUSION)
  * M593 - Get or set input shaping parameters. (Requires INPUT_SHAPING_[XY])
  * M600 - Pause for filament change: "M600 X<pos> Y<pos> Z<raise> E<first_retract> L<later_retract>". (Requires ADVANCED_PAUSE_FEATURE)
  * M603 - Configure filament change: "M603 T<tool> U<unload_length> L<load_length>". (Requires ADVANCED_PAUSE_FEATURE)
@@ -289,6 +291,7 @@
  *
  * M871 - Print/reset/clear first layer temperature offset values. (Requires PTC_PROBE, PTC_BED, or PTC_HOTEND)
  * M876 - Handle Prompt Response. (Requires HOST_PROMPT_SUPPORT and not EMERGENCY_PARSER)
+ * M891 - Set Tool Head ID (Requires SHOW_TOOL_HEAD_ID)
  * M900 - Get or Set Linear Advance K-factor. (Requires LIN_ADVANCE)
  * M906 - Set or get motor current in milliamps using axis codes XYZE, etc. Report values if no axis codes given. (Requires at least one _DRIVER_TYPE defined as TMC2130/2160/5130/5160/2208/2209/2660)
  * M907 - Set digital trimpot motor current using axis codes. (Requires a board with digital trimpots)
@@ -461,7 +464,7 @@ public:
      */
     enum MarlinBusyState : char {
       NOT_BUSY,           // Not in a handler
-      IN_HANDLER,         // Processing a GCode
+      IN_HANDLER,         // Processing a G-Code
       IN_PROCESS,         // Known to be blocking command input (as in G29)
       PAUSED_FOR_USER,    // Blocking pending any input
       PAUSED_FOR_INPUT    // Blocking pending text input (concept)
@@ -615,6 +618,10 @@ private:
     static void M0_M1();
   #endif
 
+  #if HAS_END_PRINT_SCREEN
+    static void M2();
+  #endif
+
   #if HAS_CUTTER
     static void M3_M4(const bool is_M4);
     static void M5();
@@ -718,8 +725,10 @@ private:
     static void M87();
   #endif
 
-  static void M92();
-  static void M92_report(const bool forReplay=true, const int8_t e=-1);
+  #if ENABLED(EDITABLE_STEPS_PER_UNIT)
+    static void M92();
+    static void M92_report(const bool forReplay=true, const int8_t e=-1);
+  #endif
 
   #if ENABLED(M100_FREE_MEMORY_WATCHER)
     static void M100();
@@ -759,7 +768,10 @@ private:
   #endif
 
   static void M114();
-  static void M115();
+
+  #if ENABLED(CAPABILITIES_REPORT)
+    static void M115();
+  #endif
 
   #if HAS_STATUS_MESSAGE
     static void M117();
@@ -908,7 +920,7 @@ private:
     static void M250_report(const bool forReplay=true);
   #endif
 
-  #if HAS_GCODE_M255
+  #if ENABLED(EDITABLE_DISPLAY_TIMEOUT)
     static void M255();
     static void M255_report(const bool forReplay=true);
   #endif
@@ -1058,6 +1070,7 @@ private:
   #if ENABLED(FT_MOTION)
     static void M493();
     static void M493_report(const bool forReplay=true);
+    static void M494();
   #endif
 
   static void M500();
@@ -1104,6 +1117,11 @@ private:
 
   #if ENABLED(BAUD_RATE_GCODE)
     static void M575();
+  #endif
+
+  #if ENABLED(NONLINEAR_EXTRUSION)
+    static void M592();
+    static void M592_report(const bool forReplay=true);
   #endif
 
   #if HAS_ZV_SHAPING
@@ -1175,6 +1193,11 @@ private:
     static void M871();
   #endif
 
+  #if ENABLED(SHOW_TOOL_HEAD_ID)
+    static void M891();
+    static void M891_report(const bool forReplay=true);
+  #endif
+
   #if ENABLED(LIN_ADVANCE)
     static void M900();
     static void M900_report(const bool forReplay=true);
@@ -1223,10 +1246,6 @@ private:
 
   #if ENABLED(MAGNETIC_PARKING_EXTRUDER)
     static void M951();
-  #endif
-
-  #ifdef FXDTICTRL
-    static void M952();
   #endif
 
   #if ENABLED(TOUCH_SCREEN_CALIBRATION)
@@ -1280,7 +1299,7 @@ private:
     static void M710_report(const bool forReplay=true);
   #endif
 
-  static void T(const int8_t tool_index);
+  static void T(const int8_t tool_index) IF_DISABLED(HAS_TOOLCHANGE, { UNUSED(tool_index); });
 
 };
 

@@ -304,8 +304,8 @@
  * THERMAL_PROTECTION_HYSTERESIS and/or THERMAL_PROTECTION_PERIOD
  */
 #if ENABLED(THERMAL_PROTECTION_HOTENDS)
-  #define THERMAL_PROTECTION_PERIOD 15        // Seconds
-  #define THERMAL_PROTECTION_HYSTERESIS 30     // Degrees Celsius
+  #define THERMAL_PROTECTION_PERIOD 15        // (seconds)
+  #define THERMAL_PROTECTION_HYSTERESIS 30     // (°C)
 
   #define ADAPTIVE_FAN_SLOWING              // Slow down the part-cooling fan if the temperature drops
   #if ENABLED(ADAPTIVE_FAN_SLOWING)
@@ -327,50 +327,50 @@
    * and/or decrease WATCH_TEMP_INCREASE. WATCH_TEMP_INCREASE should not be set
    * below 2.
    */
-  #define WATCH_TEMP_PERIOD  40               // Seconds
-  #define WATCH_TEMP_INCREASE 2               // Degrees Celsius
+  #define WATCH_TEMP_PERIOD  40               // (seconds)
+  #define WATCH_TEMP_INCREASE 2               // (°C)
 #endif
 
 /**
  * Thermal Protection parameters for the bed are just as above for hotends.
  */
 #if ENABLED(THERMAL_PROTECTION_BED)
-  #define THERMAL_PROTECTION_BED_PERIOD        15 // Seconds
-  #define THERMAL_PROTECTION_BED_HYSTERESIS    10 // Degrees Celsius
+  #define THERMAL_PROTECTION_BED_PERIOD        20 // Seconds
+  #define THERMAL_PROTECTION_BED_HYSTERESIS     2 // Degrees Celsius
 
   /**
    * As described above, except for the bed (M140/M190/M303).
    */
-  #define WATCH_BED_TEMP_PERIOD                60 // Seconds
-  #define WATCH_BED_TEMP_INCREASE               2 // Degrees Celsius
+  #define WATCH_BED_TEMP_PERIOD                60 // (seconds)
+  #define WATCH_BED_TEMP_INCREASE               2 // (°C)
 #endif
 
 /**
  * Thermal Protection parameters for the heated chamber.
  */
 #if ENABLED(THERMAL_PROTECTION_CHAMBER)
-  #define THERMAL_PROTECTION_CHAMBER_PERIOD    20 // Seconds
-  #define THERMAL_PROTECTION_CHAMBER_HYSTERESIS 2 // Degrees Celsius
+  #define THERMAL_PROTECTION_CHAMBER_PERIOD    20 // (seconds)
+  #define THERMAL_PROTECTION_CHAMBER_HYSTERESIS 2 // (°C)
 
   /**
    * Heated chamber watch settings (M141/M191).
    */
-  #define WATCH_CHAMBER_TEMP_PERIOD            60 // Seconds
-  #define WATCH_CHAMBER_TEMP_INCREASE           2 // Degrees Celsius
+  #define WATCH_CHAMBER_TEMP_PERIOD            60 // (seconds)
+  #define WATCH_CHAMBER_TEMP_INCREASE           2 // (°C)
 #endif
 
 /**
  * Thermal Protection parameters for the laser cooler.
  */
 #if ENABLED(THERMAL_PROTECTION_COOLER)
-  #define THERMAL_PROTECTION_COOLER_PERIOD     10 // Seconds
-  #define THERMAL_PROTECTION_COOLER_HYSTERESIS  3 // Degrees Celsius
+  #define THERMAL_PROTECTION_COOLER_PERIOD     10 // (seconds)
+  #define THERMAL_PROTECTION_COOLER_HYSTERESIS  3 // (°C)
 
   /**
    * Laser cooling watch settings (M143/M193).
    */
-  #define WATCH_COOLER_TEMP_PERIOD             60 // Seconds
-  #define WATCH_COOLER_TEMP_INCREASE            3 // Degrees Celsius
+  #define WATCH_COOLER_TEMP_PERIOD             60 // (seconds)
+  #define WATCH_COOLER_TEMP_INCREASE            3 // (°C)
 #endif
 
 #if ANY(THERMAL_PROTECTION_HOTENDS, THERMAL_PROTECTION_BED, THERMAL_PROTECTION_CHAMBER, THERMAL_PROTECTION_COOLER)
@@ -549,10 +549,12 @@
  */
 #define HOTEND_IDLE_TIMEOUT
 #if ENABLED(HOTEND_IDLE_TIMEOUT)
-  #define HOTEND_IDLE_TIMEOUT_SEC (15*60)    // (seconds) Time without extruder movement to trigger protection
-  #define HOTEND_IDLE_MIN_TRIGGER   150     // (°C) Minimum temperature to enable hotend protection
-  #define HOTEND_IDLE_NOZZLE_TARGET   0     // (°C) Safe temperature for the nozzle after timeout
-  #define HOTEND_IDLE_BED_TARGET      0     // (°C) Safe temperature for the bed after timeout
+  #define HOTEND_IDLE_TIMEOUT_SEC   (10*60)    // (seconds) Time without extruder movement to trigger protection
+  #define HOTEND_IDLE_MIN_TRIGGER      150     // (°C) Minimum temperature to enable hotend protection
+  #define HOTEND_IDLE_NOZZLE_TARGET      0     // (°C) Safe temperature for the nozzle after timeout
+  #define BED_IDLE_TIMEOUT_SEC      (60*60)    // (seconds) Time to trigger bed protection. Comment out to use HOTEND_IDLE_TIMEOUT_SEC
+  #define BED_IDLE_MIN_TRIGGER          50     // (°C) Minimum temperature to enable bed protection
+  #define BED_IDLE_TARGET                0     // (°C) Safe temperature for the bed after timeout
 #endif
 
 // @section temperature
@@ -564,6 +566,8 @@
 #define TEMP_SENSOR_AD8495_OFFSET 0.0
 #define TEMP_SENSOR_AD8495_GAIN   1.0
 
+// @section fans
+
 /**
  * Controller Fan
  * To cool down the stepper drivers and MOSFETs.
@@ -573,7 +577,7 @@
  */
 #define USE_CONTROLLER_FAN
 #if ENABLED(USE_CONTROLLER_FAN)
-    #if ANY(MiniV2, MiniV3, TAZPro, TAZProXT, Sidekick_289, Sidekick_747)
+    #if ANY(MiniV2, MiniV3, TAZPro, TAZProXT, TAZProV2, Sidekick_289, Sidekick_747)
     #define CONTROLLER_FAN_PIN FAN1_PIN        // Set a custom pin for the controller fan
   #else
     #define CONTROLLER_FAN_PIN FAN2_PIN        // Set a custom pin for the controller fan
@@ -676,8 +680,6 @@
   //#define NUM_REDUNDANT_FANS 1        // Number of sequential fans to synchronize with Fan 0
 #endif
 
-// @section extruder
-
 /**
  * Extruder cooling fans
  *
@@ -754,6 +756,7 @@
 #define FANMUX2_PIN -1
 
 /**
+ * @section caselight
  * M355 Case Light on-off / brightness
  */
 //#define CASE_LIGHT_ENABLE
@@ -776,7 +779,7 @@
   #endif
 #endif
 
-// @section homing
+// @section endstops
 
 // If you want endstops to stay on (by default) even when not homing
 // enable this option. Override at any time with M120, M121.
@@ -792,6 +795,8 @@
   //#define CLOSED_LOOP_ENABLE_PIN        -1
   //#define CLOSED_LOOP_MOVE_COMPLETE_PIN -1
 #endif
+
+// @section idex
 
 /**
  * Dual X Carriage
@@ -841,6 +846,8 @@
   // Default action to execute following M605 mode change commands. Typically G28X to apply new mode.
   //#define EVENT_GCODE_IDEX_AFTER_MODECHANGE "G28X"
 #endif
+
+// @section multi stepper
 
 /**
  * Multi-Stepper / Multi-Endstop
@@ -913,6 +920,8 @@
   //#define INVERT_E1_VS_E0_DIR       // E direction signals are opposites
 #endif
 
+// @section extruder
+
 // Activate a solenoid on the active extruder with M380. Disable all with M381.
 // Define SOL0_PIN, SOL1_PIN, etc., for each extruder that has a solenoid.
 //#define EXT_SOLENOID
@@ -925,11 +934,12 @@
  * the position of the toolhead relative to the workspace.
  */
 
-#if ANY(MiniV2, MiniV3, TAZPro, TAZProXT, Sidekick_289, Sidekick_747)
+#if ANY(MiniV2, MiniV3, TAZPro, TAZProXT, TAZProV2, Sidekick_289, Sidekick_747)
   #define SENSORLESS_BACKOFF_MM  { 4, 4 , 0}     // (mm) Backoff from endstops before sensorless homing
+  #define HOMING_BACKOFF_POST_MM { 5, 5, 2 }  // (linear=mm, rotational=°) Backoff from endstops after homing
 #else
   #if defined(Workhorse)
-    #define HOMING_BACKOFF_POST_MM { 2, 2, 0 }  // (mm) Backoff from endstops after homing
+    #define HOMING_BACKOFF_POST_MM { 2, 2, 2 }  // (mm) Backoff from endstops after homing
     #define QUICK_HOME                          // If G28 contains XY do a diagonal move first
   #elif defined(TAZ6)
     #define HOMING_BACKOFF_POST_MM { 2, 2, 16 }  // (mm) Backoff from endstops after homing
@@ -938,9 +948,8 @@
 #endif
 
 #define HOMING_BUMP_MM      { 5, 5, 2 }       // (mm) Backoff from endstops after first bump
-#define HOMING_BUMP_DIVISOR { 2, 2, 4 }       // Re-Bump Speed Divisor (Divides the Homing Feedrate)
+#define HOMING_BUMP_DIVISOR { 1, 2, 4 }       // Re-Bump Speed Divisor (Divides the Homing Feedrate)
 
-//#define HOMING_BACKOFF_POST_MM { 2, 2, 2 }  // (linear=mm, rotational=°) Backoff from endstops after homing
 //#define XY_COUNTERPART_BACKOFF_MM 0         // (mm) Backoff X after homing Y, and vice-versa
 
 //#define QUICK_HOME                          // If G28 contains XY do a diagonal move first
@@ -1133,44 +1142,55 @@
  */
 #define FT_MOTION
 #if ENABLED(FT_MOTION)
-  #define FTM_DEFAULT_MODE        ftMotionMode_DISABLED // Default mode of fixed time control. (Enums in ft_types.h)
-  #define FTM_DEFAULT_DYNFREQ_MODE dynFreqMode_DISABLED // Default mode of dynamic frequency calculation. (Enums in ft_types.h)
-  #define FTM_SHAPING_DEFAULT_X_FREQ 37.0f              // (Hz) Default peak frequency used by input shapers.
-  #define FTM_SHAPING_DEFAULT_Y_FREQ 37.0f              // (Hz) Default peak frequency used by input shapers.
-  #define FTM_LINEAR_ADV_DEFAULT_ENA false              // Default linear advance enable (true) or disable (false).
-  #define FTM_LINEAR_ADV_DEFAULT_K    0.0f              // Default linear advance gain.
-  #define FTM_SHAPING_ZETA            0.1f              // Zeta used by input shapers.
-  #define FTM_SHAPING_V_TOL           0.05f             // Vibration tolerance used by EI input shapers.
+  #define FTM_DEFAULT_MODE        ftMotionMode_ENABLED   // Default mode of fixed time control. (Enums in ft_types.h)
+  #define FTM_DEFAULT_X_COMPENSATOR ftMotionCmpnstr_NONE  // Default compensation / shaper mode on X axis.
+  #define FTM_DEFAULT_Y_COMPENSATOR ftMotionCmpnstr_NONE  // Default compensation / shaper mode on Y axis.  
+  #define FTM_SHAPING_DEFAULT_X_FREQ   37.0f      // (Hz) Default peak frequency used by input shapers
+  #define FTM_SHAPING_DEFAULT_Y_FREQ   37.0f      // (Hz) Default peak frequency used by input shapers
+  #define FTM_LINEAR_ADV_DEFAULT_ENA   false      // Default linear advance enable (true) or disable (false)
+  #define FTM_LINEAR_ADV_DEFAULT_K      0.0f      // Default linear advance gain
+  #define FTM_SHAPING_DEFAULT_ZETA_X    0.1f      // Zeta used by input shapers for X axis
+  #define FTM_SHAPING_DEFAULT_ZETA_Y    0.1f      // Zeta used by input shapers for Y axis
+
+  #define FTM_SHAPING_DEFAULT_V_TOL_X  0.05f      // Vibration tolerance used by EI input shapers for X axis
+  #define FTM_SHAPING_DEFAULT_V_TOL_Y  0.05f      // Vibration tolerance used by EI input shapers for Y axis
+
+  //#define FT_MOTION_MENU                        // Provide a MarlinUI menu to set M493 parameters
 
   /**
    * Advanced configuration
    */
-  #define FTM_BATCH_SIZE            100                 // Batch size for trajectory generation;
-  #define FTM_WINDOW_SIZE           200                 // Window size for trajectory generation.
-  #define FTM_FS                   1000                 // (Hz) Frequency for trajectory generation. (1 / FTM_TS)
-  #define FTM_TS                      0.001f            // (s) Time step for trajectory generation. (1 / FTM_FS)
-  #define FTM_STEPPER_FS          40000                 // (Hz) Frequency for stepper I/O update.
-  #define FTM_MIN_TICKS ((STEPPER_TIMER_RATE) / (FTM_STEPPER_FS)) // Minimum stepper ticks between steps.
-  #define FTM_MIN_SHAPE_FREQ         10                 // Minimum shaping frequency.
-  #define FTM_ZMAX                  100                 // Maximum delays for shaping functions (even numbers only!).
+  #define FTM_UNIFIED_BWS                         // DON'T DISABLE unless you use Ulendo FBS (not implemented)
+  #if ENABLED(FTM_UNIFIED_BWS)
+    #define FTM_BW_SIZE               100         // Unified Window and Batch size with a ratio of 2
+  #else
+    #define FTM_WINDOW_SIZE           200         // Custom Window size for trajectory generation needed by Ulendo FBS
+    #define FTM_BATCH_SIZE            100         // Custom Batch size for trajectory generation needed by Ulendo FBS
+  #endif
+
+  #define FTM_FS                     1000         // (Hz) Frequency for trajectory generation. (Reciprocal of FTM_TS)
+  #define FTM_TS                        0.001f    // (s) Time step for trajectory generation. (Reciprocal of FTM_FS)
+
+  #define FTM_STEPPER_FS           40000          // (Hz) Frequency for stepper I/O update
+
+  // Use this to adjust the time required to consume the command buffer.
+  // Try increasing this value if stepper motion is choppy.
+  #define FTM_STEPPERCMD_BUFF_SIZE 12000          // Size of the stepper command buffers. Increase if there is any
+                                                  // stutter in stepper motion. Decrease if memory is an issue.
+
+  #define FTM_STEPS_PER_UNIT_TIME (FTM_STEPPER_FS / FTM_FS)       // Interpolated stepper commands per unit time
+  #define FTM_CTS_COMPARE_VAL (FTM_STEPS_PER_UNIT_TIME / 2)       // Comparison value used in interpolation algorithm
+  #define FTM_MIN_TICKS ((STEPPER_TIMER_RATE) / (FTM_STEPPER_FS)) // Minimum stepper ticks between steps
+
+  #define FTM_MIN_SHAPE_FREQ           10               // Minimum shaping frequency
+  #define FTM_N_IS_PERIOD (FTM_FS / FTM_MIN_SHAPE_FREQ) // Number of time steps of period of minimum shaper
+                                                        // frequency, for use in FTM_ZMAX. DON'T CHANGE.
+  #define FTM_ZMAX (FTM_N_IS_PERIOD * 2)                // Maximum delays for shaping functions (even numbers only!)
                                                         // Calculate as:
-                                                        //    1/2 * (FTM_FS / FTM_MIN_SHAPE_FREQ) for ZV.
-                                                        //    (FTM_FS / FTM_MIN_SHAPE_FREQ) for ZVD, MZV.
-                                                        //    3/2 * (FTM_FS / FTM_MIN_SHAPE_FREQ) for 2HEI.
-                                                        //    2 * (FTM_FS / FTM_MIN_SHAPE_FREQ) for 3HEI.
-  #define FTM_STEPS_PER_UNIT_TIME    40                 // Interpolated stepper commands per unit time.
-                                                        // Calculate as (FTM_STEPPER_FS / FTM_FS).
-  #define FTM_CTS_COMPARE_VAL        20                 // Comparison value used in interpolation algorithm.
-                                                        // Calculate as (FTM_STEPS_PER_UNIT_TIME / 2).
-  // These values may be configured to adjust duration of loop().
-  #define FTM_STEPS_PER_LOOP         60                 // Number of stepper commands to generate each loop().
-  #define FTM_POINTS_PER_LOOP       100                 // Number of trajectory points to generate each loop().
-
-  // This value may be configured to adjust duration to consume the command buffer.
-  // Try increasing this value if stepper motion is not smooth.
-  #define FTM_STEPPERCMD_BUFF_SIZE 12000                 // Size of the stepper command buffers.
-
-  //#define FT_MOTION_MENU                              // Provide a MarlinUI menu to set M493 parameters.
+                                                        //   ZV       : FTM_N_IS_PERIOD / 2
+                                                        //   ZVD, MZV : FTM_N_IS_PERIOD
+                                                        //   2HEI     : FTM_N_IS_PERIOD * 3 / 2
+                                                        //   3HEI     : FTM_N_IS_PERIOD * 2
 #endif
 
 /**
@@ -1251,7 +1271,7 @@
 // If the Nozzle or Bed falls when the Z stepper is disabled, set its resting position here.
 //#define Z_AFTER_DEACTIVATE Z_HOME_POS
 
-#if ANY(TAZPro, TAZProXT, MiniV2, MiniV3)
+#if ANY(TAZPro, TAZProXT, TAZProV2, MiniV2, MiniV3)
   #define HOME_AFTER_DEACTIVATE  // Require rehoming after steppers are deactivated
 #endif
 
@@ -1281,13 +1301,8 @@
  */
 //#define XY_FREQUENCY_LIMIT      10 // (Hz) Maximum frequency of small zigzag infill moves. Set with M201 F<hertz>.
 #ifdef XY_FREQUENCY_LIMIT
-  #define XY_FREQUENCY_MIN_PERCENT 5 // (percent) Minimum FR percentage to apply. Set with M201 G<min%>.
+  #define XY_FREQUENCY_MIN_PERCENT 5 // (%) Minimum FR percentage to apply. Set with M201 G<min%>.
 #endif
-
-// Minimum planner junction speed. Sets the default minimum speed the planner plans for at the end
-// of the buffer and all stops. This should not be much greater than zero and should only be changed
-// if unwanted behavior is observed on a user's machine when running at very slow speeds.
-#define MINIMUM_PLANNER_SPEED 0.05 // (mm/s)
 
 //
 // Backlash Compensation
@@ -1298,10 +1313,10 @@
   // Define values for backlash distance and correction.
   // If BACKLASH_GCODE is enabled these values are the defaults.
   #if ANY(TAZPro, TAZProXT)
-    #define BACKLASH_DISTANCE_MM {0.252, 0.183, 0.075} // <-- changed:  (mm)
+    #define BACKLASH_DISTANCE_MM {0.25, 0.25, 0.04} // <-- changed:  (mm)
     #define BACKLASH_CORRECTION    1.0 // <-- changed:  0.0 = no correction; 1.0 = full correction
   #else
-    #define BACKLASH_DISTANCE_MM { 0, 0, 0 } // (mm)
+    #define BACKLASH_DISTANCE_MM {0.25, 0.25, 0.04} // (mm)
     #define BACKLASH_CORRECTION    0.0       // 0.0 = no correction; 1.0 = full correction
   #endif
 
@@ -1356,7 +1371,7 @@
     #define CALIBRATION_MEASUREMENT_RESOLUTION   (1.0f/833.0f)  // mm
   #elif ENABLED(TAZ6)
     #define CALIBRATION_MEASUREMENT_RESOLUTION   (1.0f/830.0f)  // mm
-  #elif ANY(Workhorse, TAZPro, TAZProXT, MiniV2, MiniV3)
+  #elif ANY(Workhorse, TAZPro, TAZProXT, TAZProV2, MiniV2, MiniV3)
     #define CALIBRATION_MEASUREMENT_RESOLUTION   (1.0f/420.0f)  // mm
   #endif
 
@@ -1368,7 +1383,7 @@
   #define CALIBRATION_NOZZLE_TIP_HEIGHT          1.0  // mm
   #define CALIBRATION_NOZZLE_OUTER_DIAMETER      2.0  // mm
 
-  // Uncomment to enable reporting (required for "G425 V", but consumes PROGMEM).
+  // Uncomment to enable reporting (required for "G425 V", but consumes flash).
   //#define CALIBRATION_REPORTING
 
   // The true location and dimension the cube/bolt/washer on the bed.
@@ -1393,8 +1408,8 @@
     #define CALIBRATION_MEASURE_LEFT
     #define CALIBRATION_MEASURE_BACK
   #elif ENABLED(Workhorse)
-    #define CALIBRATION_OBJECT_CENTER     { 266, -17.0,-2.0 } // mm True location is -22 in y but object size is accounting for location change
-    #define CALIBRATION_OBJECT_DIMENSIONS { 10.0, 4.0,  10.0 } // mm 
+    #define CALIBRATION_OBJECT_CENTER     { 262, -16.5,-2.0 } // mm True location is -22 in y but object size is accounting for location change
+    #define CALIBRATION_OBJECT_DIMENSIONS { 10.0, 4.0,  10.0 } // mm
 
     // Comment out any sides which are unreachable by the probe. For best
     // auto-calibration results, all sides must be reachable.
@@ -1402,20 +1417,20 @@
     //#define CALIBRATION_MEASURE_FRONT
     #define CALIBRATION_MEASURE_LEFT
     #define CALIBRATION_MEASURE_BACK
-  #elif ANY(TAZPro, TAZProXT)
+  #elif ANY(TAZPro, TAZProXT, TAZProV2)
     #if defined(TOOLHEAD_Quiver_DualExtruder)
-      #define CALIBRATION_OBJECT_CENTER     {261.5, -18, -2.0} //  mm
+      #define CALIBRATION_OBJECT_CENTER     {263, -21, -2.0} //  mm
       #define CALIBRATION_OBJECT_DIMENSIONS {10.0, 10.0, 10.0} //  mm
       #define CALIBRATION_MEASURE_FRONT
-    #elif ANY(TOOLHEAD_Twin_Nebula_175, TOOLHEAD_Twin_Nebula_285)
+    #elif ENABLED(TOOLHEAD_Galaxy_DualExtruder)
       #define CALIBRATION_OBJECT_CENTER     {261.5, -24, -2.0} //  mm
       #define CALIBRATION_OBJECT_DIMENSIONS {10.0, 10.0, 10.0} //  mm
       #define CALIBRATION_MEASURE_FRONT
-    #elif defined(LULZBOT_LongBed)
+    #elif defined(LULZBOT_LONG_BED)
       #define CALIBRATION_OBJECT_CENTER     {260,-18,-2.0} //  mm
       #define CALIBRATION_OBJECT_DIMENSIONS {10.0,  10.0, 10.0} //  mm
     #else
-      #define CALIBRATION_OBJECT_CENTER     {260,-9.5,-2.0} //  mm
+      #define CALIBRATION_OBJECT_CENTER     {265,-13.5,-2.0} //  mm
       #define CALIBRATION_OBJECT_DIMENSIONS {10.0,  1.0, 10.0} //  mm
     #endif
     // Comment out any sides which are unreachable by the probe. For best
@@ -1424,18 +1439,35 @@
     //#define CALIBRATION_MEASURE_FRONT
     #define CALIBRATION_MEASURE_LEFT
     #define CALIBRATION_MEASURE_BACK
-  
-    #define LULZBOT_CALIBRATION_SCRIPT "M117 Starting Auto-Calibration\nT0\nM218 T1 X43 Y0 Z0\nG28\nG12\nM117 Calibrating...\nG425\nM500\nM117 Calibration data saved"
-     /* Status message */ 
-     /* Switch to first nozzle */ 
-     /* Restore default nozzle offset */ 
-     /* Auto-Home */ 
-     /* Wipe the Nozzles */ 
-     /* Status message */ 
-     /* Calibrate Nozzles */ 
-     /* Save settings */ 
-     /* Status message */
-      
+
+    #if LULZBOT_EXTRUDERS == 1
+      #define LULZBOT_CALIBRATION_SCRIPT "M117 Starting Auto-Calibration\nM104 S170\nT0\nM218 T1 X43 Y0 Z0\nG28\nM109 R170\nG12\nM117 Calibrating...\nG425\nM500\nM117 Calibration data saved"
+        /* Status message */
+        /* Start nozzle heating*/
+        /* Switch to first nozzle */
+        /* Restore default nozzle offset */
+        /* Auto-Home */
+        /* Wait for nozzle heat to finish*/
+        /* Wipe the Nozzles */
+        /* Status message */
+        /* Calibrate Nozzles */
+        /* Save settings */
+        /* Status message */
+    #elif LULZBOT_EXTRUDERS == 2
+      #define LULZBOT_CALIBRATION_SCRIPT "M117 Starting Auto-Calibration\nM104 S170 T0\nM104 S170 T1\nT0\nM218 T1 X43 Y0 Z0\nG28\nM109 R170 T0\nM109 R170 T1\nG12\nM117 Calibrating...\nG425\nM500\nM117 Calibration data saved"
+        /* Status message */
+        /* Start both nozzles heating*/
+        /* Switch to first nozzle */
+        /* Restore default nozzle offset */
+        /* Auto-Home */
+        /* Wait for both nozzles to finish heat*/
+        /* Wipe the Nozzles */
+        /* Status message */
+        /* Calibrate Nozzles */
+        /* Save settings */
+        /* Status message */
+    #endif   
+
   #endif
 
   //#define CALIBRATION_MEASURE_IMIN
@@ -1457,7 +1489,7 @@
 
   // Define the pin to read during calibration
   #ifndef CALIBRATION_PIN
-    #if defined(LULZBOT_BLTouch) && ANY(TAZPro, TAZProXT)
+    #if defined(LULZBOT_BLTouch) && ANY(TAZPro, TAZProXT, TAZProV2)
       #define CALIBRATION_PIN 31 // Override in pins.h or set to -1 to use your Z endstop
       #define CALIBRATION_PIN_INVERTING true // Set to true to invert the pin
     #else
@@ -1586,11 +1618,6 @@
   #define FEEDRATE_CHANGE_BEEP_FREQUENCY 440
 #endif
 
-//
-// LCD Backlight Timeout
-//
-//#define LCD_BACKLIGHT_TIMEOUT_MINS 1  // (minutes) Timeout before turning off the backlight
-
 #if HAS_BED_PROBE && ANY(HAS_MARLINUI_MENU, HAS_TFT_LVGL_UI)
   //#define PROBE_OFFSET_WIZARD       // Add a Probe Z Offset calibration option to the LCD menu
   #if ENABLED(PROBE_OFFSET_WIZARD)
@@ -1630,8 +1657,23 @@
     #define LCD_PRINTER_INFO_IS_BOOTSCREEN // Show bootscreen(s) instead of Printer Info pages
   #endif
 
-  // Add 50/100mm moves to MarlinUI even with a smaller bed
-  //#define LARGE_MOVE_ITEMS
+  /**
+   * MarlinUI "Move Axis" menu distances. Comma-separated list.
+   * Values are displayed as-defined, so always use plain numbers here.
+   * Axis moves <= 1/2 the axis length and Extruder moves <= EXTRUDE_MAXLENGTH
+   * will be shown in the move submenus.
+   */
+  #define MANUAL_MOVE_DISTANCE_MM                    10, 1.0, 0.1  // (mm)
+  //#define MANUAL_MOVE_DISTANCE_MM         100, 50, 10, 1.0, 0.1  // (mm)
+  //#define MANUAL_MOVE_DISTANCE_MM    500, 100, 50, 10, 1.0, 0.1  // (mm)
+
+  // Manual move distances for INCH_MODE_SUPPORT
+  #define MANUAL_MOVE_DISTANCE_IN                          0.100, 0.010, 0.001  // (in)
+  //#define MANUAL_MOVE_DISTANCE_IN          1.000, 0.500, 0.100, 0.010, 0.001  // (in)
+  //#define MANUAL_MOVE_DISTANCE_IN   5.000, 1.000, 0.500, 0.100, 0.010, 0.001  // (in)
+
+  // Manual move distances for rotational axes
+  #define MANUAL_MOVE_DISTANCE_DEG             90, 45, 22.5, 5, 1  // (°)
 
   // BACK menu items keep the highlight at the top
   #define TURBO_BACK_MENU_ITEM
@@ -1676,8 +1718,12 @@
   //#define SOUND_MENU_ITEM   // Add a mute option to the LCD menu
   #define SOUND_ON_DEFAULT    // Buzzer/speaker default enabled state
 
+  #if HAS_WIRED_LCD
+    //#define DOUBLE_LCD_FRAMERATE        // Not recommended for slow boards.
+  #endif
+
   // The timeout to return to the status screen from sub-menus
-  #define LCD_TIMEOUT_TO_STATUS 15000   // (ms)
+  #define LCD_TIMEOUT_TO_STATUS (15*60000)   // (ms) 15 minutes for screen timeout
 
   // Scroll a longer status message into view
   #define STATUS_MESSAGE_SCROLLING
@@ -1720,6 +1766,15 @@
   #endif
 
 #endif // HAS_DISPLAY
+
+#if HAS_FEEDRATE_EDIT
+  #define SPEED_EDIT_MIN    10  // (%) Feedrate percentage edit range minimum
+  #define SPEED_EDIT_MAX   999  // (%) Feedrate percentage edit range maximum
+#endif
+#if HAS_FLOW_EDIT
+  #define FLOW_EDIT_MIN     10  // (%) Flow percentage edit range minimum
+  #define FLOW_EDIT_MAX    999  // (%) Flow percentage edit range maximum
+#endif
 
 // Add 'M73' to set print job progress, overrides Marlin's built-in estimate
 #define SET_PROGRESS_MANUALLY
@@ -1765,7 +1820,7 @@
    *
    * :['SPI_HALF_SPEED', 'SPI_QUARTER_SPEED', 'SPI_EIGHTH_SPEED']
    */
-  #if ANY(TAZPro, TAZProXT)
+  #if ANY(TAZPro, TAZProXT, TAZProV2)
     #define SD_SPI_SPEED SPI_SIXTEENTH_SPEED
   #endif
 
@@ -1797,7 +1852,7 @@
 
   //#define MEDIA_MENU_AT_TOP               // Force the media menu to be listed on the top of the main menu
 
-  #define EVENT_GCODE_SD_ABORT "G0 Z" charLULZBOT_Z_MAX_POS "F2500\nG27\nM524"      // G-code to run on SD Abort Print (e.g., "G28XY" or "G27")
+  #define EVENT_GCODE_SD_ABORT "G0 Z" charZ_MAX_POS "F2500\nG27\nM524\nM104 S0"      // G-code to run on SD Abort Print (e.g., "G28XY" or "G27")
 
   #if ENABLED(PRINTER_EVENT_LEDS)
     #define PE_LEDS_COMPLETED_TIME  (30*60) // (seconds) Time to keep the LED "done" color before restoring normal illumination
@@ -1813,19 +1868,20 @@
    */
   #define POWER_LOSS_RECOVERY
   #if ENABLED(POWER_LOSS_RECOVERY)
-    #define PLR_ENABLED_DEFAULT   false // Power Loss Recovery enabled by default. (Set with 'M413 Sn' & M500)
-    //#define BACKUP_POWER_SUPPLY       // Backup power / UPS to move the steppers on power loss
-    //#define POWER_LOSS_ZRAISE       2 // (mm) Z axis raise on resume (on power loss with UPS)
-    //#define POWER_LOSS_PIN         44 // Pin to detect power loss. Set to -1 to disable default pin on boards without module.
-    //#define POWER_LOSS_STATE     HIGH // State of pin indicating power loss
-    //#define POWER_LOSS_PULLUP         // Set pullup / pulldown as appropriate for your sensor
+    #define PLR_ENABLED_DEFAULT       false // Power Loss Recovery enabled by default. (Set with 'M413 Sn' & M500)
+    //#define PLR_BED_THRESHOLD BED_MAXTEMP // (°C) Skip user confirmation at or above this bed temperature (0 to disable)
+    //#define BACKUP_POWER_SUPPLY           // Backup power / UPS to move the steppers on power loss
+    //#define POWER_LOSS_ZRAISE           2 // (mm) Z axis raise on resume (on power loss with UPS)
+    //#define POWER_LOSS_PIN             44 // Pin to detect power loss. Set to -1 to disable default pin on boards without module.
+    //#define POWER_LOSS_STATE         HIGH // State of pin indicating power loss
+    //#define POWER_LOSS_PULLUP             // Set pullup / pulldown as appropriate for your sensor
     //#define POWER_LOSS_PULLDOWN
-    //#define POWER_LOSS_PURGE_LEN   20 // (mm) Length of filament to purge on resume
-    //#define POWER_LOSS_RETRACT_LEN 10 // (mm) Length of filament to retract on fail. Requires backup power.
+    //#define POWER_LOSS_PURGE_LEN       20 // (mm) Length of filament to purge on resume
+    //#define POWER_LOSS_RETRACT_LEN     10 // (mm) Length of filament to retract on fail. Requires backup power.
 
     // Without a POWER_LOSS_PIN the following option helps reduce wear on the SD card,
     // especially with "vase mode" printing. Set too high and vases cannot be continued.
-    #define POWER_LOSS_MIN_Z_CHANGE 0.05 // (mm) Minimum Z change before saving power-loss data
+    #define POWER_LOSS_MIN_Z_CHANGE    0.05 // (mm) Minimum Z change before saving power-loss data
 
     // Enable if Z homing is needed for proper recovery. 99.9% of the time this should be disabled!
     //#define POWER_LOSS_RECOVER_ZHOME
@@ -1861,9 +1917,10 @@
 
   // SD Card Sorting options
   #if ENABLED(SDCARD_SORT_ALPHA)
+    #define SDSORT_REVERSE     false  // Default to sorting file names in reverse order.
     #define SDSORT_LIMIT       40     // Maximum number of sorted items (10-256). Costs 27 bytes each.
-    #define FOLDER_SORTING     -1     // -1=above  0=none  1=below
-    #define SDSORT_GCODE       false  // Allow turning sorting on/off with LCD and M34 G-code.
+    #define SDSORT_FOLDERS     -1     // -1=above  0=none  1=below
+    #define SDSORT_GCODE       false  // Enable G-code M34 to set sorting behaviors: M34 S<-1|0|1> F<-1|0|1>
     #define SDSORT_USES_RAM    false  // Pre-allocate a static array for faster pre-sorting.
     #define SDSORT_USES_STACK  false  // Prefer the stack for pre-sorting to give back some SRAM. (Negated by next 2 options.)
     #define SDSORT_CACHE_NAMES false  // Keep sorted items in RAM longer for speedy performance. Most expensive option.
@@ -1912,7 +1969,7 @@
    *
    * [1] On AVR an interrupt-capable pin is best for UHS3 compatibility.
    */
-  #if ANY(TAZPro, TAZProXT, MiniV3)
+  #if ANY(TAZPro, TAZProXT, TAZProV2, MiniV3)
     #define USB_FLASH_DRIVE_SUPPORT
   #endif
   #if ENABLED(USB_FLASH_DRIVE_SUPPORT)
@@ -2084,7 +2141,10 @@
   #define STATUS_ALT_BED_BITMAP     // Use the alternative bed bitmap
   //#define STATUS_ALT_FAN_BITMAP     // Use the alternative fan bitmap
   #define STATUS_FAN_FRAMES 4       // :[0,1,2,3,4] Number of fan animation frames
+
+  // Only one STATUS_HEAT_* option can be enabled
   //#define STATUS_HEAT_PERCENT       // Show heating in a progress bar
+  //#define STATUS_HEAT_POWER         // Show heater output power as a vertical bar
 
   // Frivolous Game Options
   #define MARLIN_BRICKOUT
@@ -2298,6 +2358,15 @@
 #endif
 
 //
+// LCD Backlight Timeout
+// Requires a display with a controllable backlight
+//
+//#define LCD_BACKLIGHT_TIMEOUT_MINS 1  // (minutes) Timeout before turning off the backlight
+#if defined(DISPLAY_SLEEP_MINUTES) || defined(LCD_BACKLIGHT_TIMEOUT_MINS)
+  #define EDITABLE_DISPLAY_TIMEOUT      // Edit timeout with M255 S<minutes> and a menu item
+#endif
+
+//
 // ADC Button Debounce
 //
 #if HAS_ADC_BUTTONS
@@ -2355,7 +2424,7 @@
   #define BABYSTEP_ZPROBE_OFFSET          // Combine M851 Z and Babystepping
   #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
     //#define BABYSTEP_HOTEND_Z_OFFSET      // For multiple hotends, babystep relative Z offsets
-    #if DISABLED(TAZPro, TAZProXT, MiniV3)
+    #if DISABLED(TAZPro, TAZProXT, TAZProV2, MiniV3)
       #define BABYSTEP_GFX_OVERLAY          // Enable graphical overlay on Z-offset editor
     #endif
   #endif
@@ -2378,18 +2447,28 @@
  *
  * See https://marlinfw.org/docs/features/lin_advance.html for full instructions.
  */
-#define LIN_ADVANCE
+#ifndef FT_MOTION
+  #define LIN_ADVANCE
+#endif
 #if ENABLED(LIN_ADVANCE)
   #if ENABLED(DISTINCT_E_FACTORS)
     #define ADVANCE_K { 0.22 }    // (mm) Compression length per 1mm/s extruder speed, per extruder
   #else
-    #define ADVANCE_K 0.22        // (mm) Compression length applying to all extruders
+    #define ADVANCE_K 0.00        // (mm) Compression length applying to all extruders
   #endif
   //#define ADVANCE_K_EXTRA       // Add a second linear advance constant, configurable with M900 L.
   //#define LA_DEBUG              // Print debug information to serial during operation. Disable for production use.
   //#define ALLOW_LOW_EJERK       // Allow a DEFAULT_EJERK value of <10. Recommended for direct drive hotends.
   //#define EXPERIMENTAL_I2S_LA   // Allow I2S_STEPPER_STREAM to be used with LA. Performance degrades as the LA step rate reaches ~20kHz.
 #endif
+
+/**
+ * Nonlinear Extrusion Control
+ *
+ * Control extrusion rate based on instantaneous extruder velocity. Can be used to correct for
+ * underextrusion at high extruder speeds that are otherwise well-behaved (i.e., not skipping).
+ */
+//#define NONLINEAR_EXTRUSION
 
 // @section leveling
 
@@ -2478,10 +2557,12 @@
   #elif ENABLED(Workhorse)
     #define G29_RECOVER_COMMANDS "M104 S170\nG28 Z0\nG28\nG12\nM109 R160\nM400\nM117 Probing bed"
   #elif ANY(TAZProXT, TAZPro)
-    #define G29_RECOVER_COMMANDS "M104 S170 T0\nM104 S170 T1\nG0 Z5 F6000\nG0 X150 F9999\nG28 Z0\nG28\nG12\nM109 R160\nM400\nM117 Probing bed"
+    #define G29_RECOVER_COMMANDS "M104 S170 T0\nM104 S170 T1\nG0 Z5 F6000\nG0 X150 F9999\nG28 Z0\nG28\n" WIPE_SEQUENCE_COMMANDS "\nM109 R160\nM400\nM117 Probing bed"  //only wipe nozzle 1
   #endif
   #define G29_FAILURE_COMMANDS "M117 Bed leveling failed.\nG0 Z10\nG0 E0\nM300 P25 S880\nM300 P50 S0\nM300 P25 S880\nM300 P50 S0\nM300 P25 S880\nG4 S1"
 #endif
+
+// @section probes
 
 /**
  * Thermal Probe Compensation
@@ -2545,7 +2626,7 @@
 
     // Height above Z=0.0 to raise the nozzle. Lowering this can help the probe to heat faster.
     // Note: The Z=0.0 offset is determined by the probe Z offset (e.g., as set with M851 Z).
-    #define PTC_PROBE_HEATING_OFFSET 0.5
+    #define PTC_PROBE_HEATING_OFFSET 0.5  // (mm)
   #endif
 #endif // PTC_PROBE || PTC_BED || PTC_HOTEND
 
@@ -2599,6 +2680,8 @@
   //#define G38_PROBE_AWAY        // Include G38.4 and G38.5 to probe away from target
   #define G38_MINIMUM_MOVE 0.0275 // (mm) Minimum distance that will produce a move.
 #endif
+
+// @section motion
 
 // Moves (or segments) with fewer steps than this will be joined with the next move
 #define MIN_STEPS_PER_SEGMENT 6
@@ -2655,10 +2738,9 @@
 //================================= Buffers =================================
 //===========================================================================
 
-// @section motion
+// @section gcode
 
 // The number of linear moves that can be in the planner at once.
-// The value of BLOCK_BUFFER_SIZE must be a power of 2 (e.g., 8, 16, 32)
 #if ALL(HAS_MEDIA, DIRECT_STEPPING)
   #define BLOCK_BUFFER_SIZE  8
 #elif HAS_MEDIA
@@ -2740,11 +2822,13 @@
   //#define FULL_REPORT_TO_HOST_FEATURE   // Auto-report the machine status like Grbl CNC
 #endif
 
-// Bad Serial-connections can miss a received command by sending an 'ok'
-// Therefore some clients abort after 30 seconds in a timeout.
-// Some other clients start sending commands while receiving a 'wait'.
-// This "wait" is only sent when the buffer is empty. 1 second is a good value here.
-//#define NO_TIMEOUTS 1000 // Milliseconds
+/**
+ * Bad Serial-connections can miss a received command by sending an 'ok'
+ * Therefore some clients abort after 30 seconds in a timeout.
+ * Some other clients start sending commands while receiving a 'wait'.
+ * This "wait" is only sent when the buffer is empty. 1 second is a good value here.
+ */
+//#define NO_TIMEOUTS 1000 // (ms)
 
 // Some clients will have this feature soon. This could make the NO_TIMEOUTS unnecessary.
 #define ADVANCED_OK
@@ -2755,6 +2839,15 @@
 
 // For serial echo, the number of digits after the decimal point
 //#define SERIAL_FLOAT_PRECISION 4
+
+/**
+ * This feature is EXPERIMENTAL so use with caution and test thoroughly.
+ * Enable this option to receive data on the serial ports via the onboard DMA
+ * controller for more stable and reliable high-speed serial communication.
+ * Only some STM32 MCUs are currently supported.
+ * Note: This has no effect on emulated USB serial ports.
+ */
+//#define SERIAL_DMA
 
 /**
  * Set the number of proportional font spaces required to fill up a typical character space.
@@ -2775,6 +2868,8 @@
  *   'M106 P<fan> T1'     : Restore the previous fan speed
  */
 //#define EXTRA_FAN_SPEED
+
+// @section gcode
 
 /**
  * Firmware-based and LCD-controlled retract
@@ -2809,6 +2904,8 @@
     //#define RETRACT_SYNC_MIXING           // Retract and restore all mixing steppers simultaneously
   #endif
 #endif
+
+// @section tool change
 
 /**
  * Universal tool change settings.
@@ -2890,7 +2987,21 @@
      *   - Switch to a different nozzle on an extruder jam
      */
     #define TOOLCHANGE_MIGRATION_FEATURE
+    #if ENABLED(TOOLCHANGE_MIGRATION_FEATURE)
+      // Override toolchange settings
+      // By default tool migration uses regular toolchange settings.
+      // With a prime tower, tool-change swapping/priming occur inside the bed.
+      // When migrating to a new unprimed tool you can set override values below.
+      //#define MIGRATION_ZRAISE            0 // (mm)
 
+      // Longer prime to clean out
+      //#define MIGRATION_FS_EXTRA_PRIME    0 // (mm) Extra priming length
+      //#define MIGRATION_FS_WIPE_RETRACT   0 // (mm) Retract before cooling for less stringing, better wipe, etc.
+
+      // Cool after prime to reduce stringing
+      //#define MIGRATION_FS_FAN_SPEED    255 // 0-255
+      //#define MIGRATION_FS_FAN_TIME       0 // (seconds)
+    #endif
   #endif
 
   /**
@@ -2903,6 +3014,9 @@
     #define TOOLCHANGE_PARK_XY_FEEDRATE 6000  // (mm/m)
     //#define TOOLCHANGE_PARK_X_ONLY          // X axis only move
     //#define TOOLCHANGE_PARK_Y_ONLY          // Y axis only move
+    #if ENABLED(TOOLCHANGE_MIGRATION_FEATURE)
+      //#define TOOLCHANGE_MIGRATION_DO_PARK  // Force park (or no-park) on migration
+    #endif
   #endif
 #endif // EXTRUDERS > 1
 
@@ -2920,7 +3034,7 @@
 #define ADVANCED_PAUSE_FEATURE
 #if ENABLED(ADVANCED_PAUSE_FEATURE)
   #define PAUSE_PARK_RETRACT_FEEDRATE         10  // (mm/s) Initial retract feedrate.
-  #define PAUSE_PARK_RETRACT_LENGTH            2  // (mm) Initial retract.
+  #define PAUSE_PARK_RETRACT_LENGTH            1  // (mm) Initial retract.
                                                   // This short retract is done immediately, before parking the nozzle.
   #define FILAMENT_CHANGE_UNLOAD_FEEDRATE      2  // (mm/s) Unload filament feedrate. This can be pretty fast.
   #define FILAMENT_CHANGE_UNLOAD_ACCEL        25  // (mm/s^2) Lower acceleration may allow a faster feedrate.
@@ -2965,6 +3079,7 @@
 
   #define FILAMENT_LOAD_UNLOAD_GCODES           // Add M701/M702 Load/Unload G-codes, plus Load/Unload in the LCD Prepare menu.
   #define FILAMENT_UNLOAD_ALL_EXTRUDERS         // Allow M702 to unload all extruders above a minimum target temp (as set by M302)
+  #define CONFIGURE_FILAMENT_CHANGE               // Add M603 G-code and menu items. Requires ~1.3K bytes of flash.
 #endif
 
 // @section tmc_smart
@@ -3001,11 +3116,11 @@
    * Interpolate microsteps to 256
    * Override for each driver with <driver>_INTERPOLATE settings below
    */
-  #define INTERPOLATE      false
+  #define INTERPOLATE      true
 
   #if AXIS_IS_TMC_CONFIG(X)
     #define X_CURRENT       975         // (mA) RMS current. Multiply by 1.414 for peak current.
-    #define X_CURRENT_HOME   X_CURRENT/2  // (mA) RMS current for sensorless homing
+    #define X_CURRENT_HOME   X_CURRENT  // (mA) RMS current for sensorless homing
     #define X_MICROSTEPS     16        // 0..256
     #define X_RSENSE         LULZBOT_RSENSE     // Multiplied x1000 for TMC26X
     #define X_CHAIN_POS      -1        // -1..0: Not chained. 1: MCU MOSI connected. 2: Next in chain, ...
@@ -3253,7 +3368,7 @@
    * The default SW SPI pins are defined the respective pins files,
    * but you can override or define them here.
    */
-  #if ANY(TAZPro, TAZProXT)
+  #if ANY(TAZPro, TAZProXT, TAZProV2)
     #define TMC_USE_SW_SPI
   #endif
   //#define TMC_SPI_MOSI  -1
@@ -3316,7 +3431,7 @@
    */
   #if HAS_STEALTHCHOP
     //#define STEALTHCHOP_XY
-    #define STEALTHCHOP_Z
+    //#define STEALTHCHOP_Z
     //#define STEALTHCHOP_I
     //#define STEALTHCHOP_J
     //#define STEALTHCHOP_K
@@ -3446,17 +3561,19 @@
    * Comment *_STALL_SENSITIVITY to disable sensorless homing for that axis.
    * @section tmc/stallguard
    */
-  #define SENSORLESS_HOMING // StallGuard capable drivers only
+  #if DISABLED(TAZProV2)
+    #define SENSORLESS_HOMING // StallGuard capable drivers only
+  #endif
 
   #if ANY(SENSORLESS_HOMING, SENSORLESS_PROBING)
     // TMC2209: 0...255. TMC2130: -64...63
-    #if ANY(TAZPro, TAZProXT)
-      #if ANY(LULZBOT_UNIVERSAL_TOOLHEAD, TOOLHEAD_UNIVERSAL_X_SERIES)
-        #define X_STALL_SENSITIVITY  3
-        #define Y_STALL_SENSITIVITY  5
-      #else      
-        #define X_STALL_SENSITIVITY  5
-        #define Y_STALL_SENSITIVITY  5 
+    #if ANY(TAZPro, TAZProXT, TAZProV2)
+      #if ANY(TOOLHEAD_Legacy_Universal, TOOLHEAD_Galaxy_Series)
+        #define X_STALL_SENSITIVITY  4
+        #define Y_STALL_SENSITIVITY  4
+      #else
+        #define X_STALL_SENSITIVITY  4
+        #define Y_STALL_SENSITIVITY  4
       #endif
     #elif ANY(MiniV2)
       #define X_STALL_SENSITIVITY  3
@@ -3537,9 +3654,8 @@
 /**
  * TWI/I2C BUS
  *
- * This feature is an EXPERIMENTAL feature so it shall not be used on production
- * machines. Enabling this will allow you to send and receive I2C data from slave
- * devices on the bus.
+ * This feature is EXPERIMENTAL but may be useful for custom I2C peripherals.
+ * Enable this to send and receive I2C data from slave devices on the bus.
  *
  * ; Example #1
  * ; This macro send the string "Marlin" to the slave device with address 0x63 (99)
@@ -3893,38 +4009,6 @@
  */
 //#define CNC_COORDINATE_SYSTEMS
 
-// @section reporting
-
-/**
- * Auto-report fan speed with M123 S<seconds>
- * Requires fans with tachometer pins
- */
-//#define AUTO_REPORT_FANS
-
-/**
- * Auto-report temperatures with M155 S<seconds>
- */
-#define AUTO_REPORT_TEMPERATURES
-#if ENABLED(AUTO_REPORT_TEMPERATURES) && TEMP_SENSOR_REDUNDANT
-  //#define AUTO_REPORT_REDUNDANT // Include the "R" sensor in the auto-report
-#endif
-
-/**
- * Auto-report position with M154 S<seconds>
- */
-//#define AUTO_REPORT_POSITION
-#if ENABLED(AUTO_REPORT_POSITION)
-  //#define AUTO_REPORT_REAL_POSITION // Auto-report the real position
-#endif
-
-/**
- * Include capabilities in M115 output
- */
-#define EXTENDED_CAPABILITIES_REPORT
-#if ENABLED(EXTENDED_CAPABILITIES_REPORT)
-  //#define M115_GEOMETRY_REPORT
-#endif
-
 // @section security
 
 /**
@@ -3960,18 +4044,29 @@
      * Use 'M200 [T<extruder>] L<limit>' to override and 'M502' to reset.
      * A non-zero value activates Volume-based Extrusion Limiting.
      */
-    #define DEFAULT_VOLUMETRIC_EXTRUDER_LIMIT 0.00      // (mm^3/sec)
+    #define DEFAULT_VOLUMETRIC_EXTRUDER_LIMIT  0.00     // (mm^3/sec)
+    #define VOLUMETRIC_EXTRUDER_LIMIT_MAX     20        // (mm^3/sec)
   #endif
 #endif
 
 // @section reporting
 
-// Extra options for the M114 "Current Position" report
+/**
+ * Extra options for the M114 "Current Position" report
+ */
 #define M114_DETAIL         // Use 'M114` for details to check planner calculations
 //#define M114_REALTIME       // Real current position based on forward kinematics
 //#define M114_LEGACY         // M114 used to synchronize on every call. Enable if needed.
 
+/**
+ * Auto-report fan speed with M123 S<seconds>
+ * Requires fans with tachometer pins
+ */
+//#define AUTO_REPORT_FANS
+
 //#define REPORT_FAN_CHANGE   // Report the new fan speed when changed by M106 (and others)
+
+// @section gcode
 
 /**
  * Spend 28 bytes of SRAM to optimize the G-code parser
@@ -3982,13 +4077,21 @@
   //#define GCODE_QUOTED_STRINGS  // Support for quoted string parameters
 #endif
 
-// Support for MeatPack G-code compression (https://github.com/scottmudge/OctoPrint-MeatPack)
+/**
+ * Support for MeatPack G-code compression (https://github.com/scottmudge/OctoPrint-MeatPack)
+ */
 //#define MEATPACK_ON_SERIAL_PORT_1
 //#define MEATPACK_ON_SERIAL_PORT_2
 
 //#define GCODE_CASE_INSENSITIVE  // Accept G-code sent to the firmware in lowercase
 
 //#define REPETIER_GCODE_M360     // Add commands originally from Repetier FW
+
+/**
+ * Enable M111 debug flags 1=ECHO, 2=INFO, 4=ERRORS (unimplemented).
+ * Disable to save some flash. Some hosts (Repetier Host) may rely on this feature.
+ */
+#define DEBUG_FLAGS_GCODE
 
 /**
  * Enable this option for a leaner build of Marlin that removes
@@ -4017,8 +4120,6 @@
   //#define VARIABLE_G0_FEEDRATE // The G0 feedrate is set by F in G0 motion mode
 #endif
 
-// @section gcode
-
 /**
  * Startup commands
  *
@@ -4044,117 +4145,106 @@
  * User-defined menu items to run custom G-code.
  * Up to 25 may be defined, but the actual number is LCD-dependent.
  */
-#if ANY(LULZBOT_UNIVERSAL_TOOLHEAD, LULZBOT_UNIVERSAL_X_SERIES)
+#if ANY(TOOLHEAD_Legacy_Universal, TOOLHEAD_Galaxy_Series, TOOLHEAD_Galaxy_DualExtruder)
   #define CUSTOM_MENU_MAIN
 #endif
  #define CUSTOM_MENU_MAIN_TITLE "Tool Heads"
 #if ENABLED(CUSTOM_MENU_MAIN)
- 
+
   //#define CUSTOM_MENU_MAIN_SCRIPT_DONE "M117 Toolhead Changed"
   #define CUSTOM_MENU_MAIN_SCRIPT_AUDIBLE_FEEDBACK
   #define CUSTOM_MENU_MAIN_SCRIPT_RETURN   // Return to status screen after a script
   #define CUSTOM_MENU_MAIN_ONLY_IDLE         // Only show custom menu when the machine is idle
 
-  #define SK_DEFAULT_PID   "26.90I2.41D75.19"
-  #define TAZ6_DEFAULT_PID "P28.79I1.91D108.51"
-  #define DEFAULT_PID      "P21.0I1.78D61.93"
-
   #if defined(Workhorse) //conversion to digipot units = ((mA-750)/5+135)
-    #define E_CURRENT_Aero "160" //((875-750)/5+135) = 160
-    #define E_CURRENT_Std  "135" //((750-750)/5+135) = 135
-    #define E_CURRENT_BMG  "160" //((875-750)/5+135) = 160
-    #define E_CURRENT_LGX175 "135" //((750-750)/5+135) = 135
-    #define E_CURRENT_LGX285 "155" //((850-750)/5+135) = 155
+    #define E_CURRENT_Aero "M907 E160" //((875-750)/5+135) = 160
+    #define E_CURRENT_Std  "M907 E135" //((750-750)/5+135) = 135
+    #define E_CURRENT_BMG  "M907 E160" //((875-750)/5+135) = 160
+    #define E_CURRENT_LGX175 "M907 E135" //((750-750)/5+135) = 135
+    #define E_CURRENT_LGX285 "M907 E155" //((850-750)/5+135) = 155
   #else
-    #define E_CURRENT_Aero "960"
-    #define E_CURRENT_BMG  "960"
-    #define E_CURRENT_LGX175 "750"
-    #define E_CURRENT_LGX285 "850"
+    #define E_CURRENT_Aero "M906 E960"
+    #define E_CURRENT_BMG  "M906 E960"
+    #define E_CURRENT_LGX175 "M906 E750"
+    #define E_CURRENT_LGX285 "M906 E850"
+    #define E_CURRENT_TWNB175 "M906 T0 E750\n M906 T1 E750"
+    #define E_CURRENT_TWNB285 "M906 T0 E850\n M906 T1 E850"
   #endif
 
+  #if DISABLED(TAZPro, TAZProV2, TAZProXT)
+    #define MAIN_MENU_ITEM_1_DESC "Park for TH Swap"
+    #define MAIN_MENU_ITEM_1_GCODE "G28O\nG0 X100 Y283 Z200"
+  #endif
 
-  #if defined(LULZBOT_UNIVERSAL_X_SERIES)
-    #if DISABLED(Workhorse)
-      #define MAIN_MENU_ITEM_1_DESC "TH SWAP POSITION"
-      #define MAIN_MENU_ITEM_1_GCODE "G28O\nG27"
+  #if defined(TOOLHEAD_Galaxy_Series)
+    #define MAIN_MENU_ITEM_2_DESC "MET175|NKL-PL BRASS"
+    #define MAIN_MENU_ITEM_2_GCODE "M891 T8\nM92E415\nM306 A0.0622 C15.44 F0.1844 P50 R0.1128\n" E_CURRENT_LGX175 "\nM900 K0.05\nM500\nM117 MET175|NKL-PL BRASS"
 
-      #define MAIN_MENU_ITEM_2_DESC "MET - 1.75|NKL-PL BR"
-      #define MAIN_MENU_ITEM_2_GCODE "M92E410\nM301P" charMET175_DEFAULT_Kp "I" charMET175_DEFAULT_Ki "D" charMET175_DEFAULT_Kd "\nM906E" E_CURRENT_LGX175 "\nM500\nM117 Meteorite - 1.75"
+    #define MAIN_MENU_ITEM_3_DESC "MET285|NKL-PL BRASS"
+    #define MAIN_MENU_ITEM_3_GCODE "M891 T9\nM92E439\nM306 A0.0622 C15.44 F0.1844 P50 R0.1128\n" E_CURRENT_LGX285 "\nM900 K0.05\nM500\nM117 MET285|NKL-PL BRASS"
 
-      #define MAIN_MENU_ITEM_3_DESC "MET - 2.85|NKL-PL BR"
-      #define MAIN_MENU_ITEM_3_GCODE "M92E439\nM301P" charMET285_DEFAULT_Kp "I" charMET285_DEFAULT_Ki "D" charMET285_DEFAULT_Kd "\nM906E" E_CURRENT_LGX285 "\nM500\nM117 Meteorite - 2.85"
-
-      #define MAIN_MENU_ITEM_4_DESC "AST - 2.85|NKL-PL BR"
-      #define MAIN_MENU_ITEM_4_GCODE "M92E439\nM301P" charAST285_DEFAULT_Kp "I" charAST285_DEFAULT_Ki "D" charAST285_DEFAULT_Kd "\nM906E" E_CURRENT_LGX285 "\nM500\nM117 Asteroid - 2.85"
-    #else
-      #define MAIN_MENU_ITEM_1_DESC "TH SWAP POSITION"
-      #define MAIN_MENU_ITEM_1_GCODE "G28O\nG27"
-
-      #define MAIN_MENU_ITEM_2_DESC "Meteor - 1.75"
-      #define MAIN_MENU_ITEM_2_GCODE "M92E410\nM301P" charMET175_DEFAULT_Kp "I" charMET175_DEFAULT_Ki "D" charMET175_DEFAULT_Kd "\nM907E" E_CURRENT_LGX175 "\nM500\nM117 Meteorite - 1.75"
-
-      #define MAIN_MENU_ITEM_3_DESC "Meteor - 2.85"
-      #define MAIN_MENU_ITEM_3_GCODE "M92E439\nM301P" charMET285_DEFAULT_Kp "I" charMET285_DEFAULT_Ki "D" charMET285_DEFAULT_Kd "\nM907E" E_CURRENT_LGX285 "\nM500\nM117 Meteorite - 2.85"
-
-      #define MAIN_MENU_ITEM_4_DESC "Asteroid - 2.85"
-      #define MAIN_MENU_ITEM_4_GCODE "M92E439\nM301P" charAST285_DEFAULT_Kp "I" charAST285_DEFAULT_Ki "D" charAST285_DEFAULT_Kd "\nM907E" E_CURRENT_LGX285 "\nM500\nM117 Asteroid - 2.85"
+    #if NONE(MiniV2, Sidekick_289) // Mini2 and 289 do not have the power to supply 100w to the tool head
+      #define MAIN_MENU_ITEM_4_DESC "AST285|GM STEEL"
+      #define MAIN_MENU_ITEM_4_GCODE "M891 T10\nM92E439\nM306 A0.098 C36.75 F0.1632 P100 R0.0027\n" E_CURRENT_LGX285 "\nM900 K0.03\nM500\nM117 AST285|GM STEEL"
     #endif
 
-  #elif defined(TOOLHEAD_Universal_ToolHead)
+  #elif defined(TOOLHEAD_Galaxy_DualExtruder)
+    #define MAIN_MENU_ITEM_2_DESC "TWNB175|NKL-PL BRASS"
+    #define MAIN_MENU_ITEM_2_GCODE "M891 T11\nM92E415\n" E_CURRENT_TWNB175 "\nM500\nM117 TWNB175|NKL-PL BRASS"
 
-    #if ANY(Sidekick_289, Sidekick_747)
-      #define MAIN_MENU_ITEM_1_DESC "SK175|0.50mm|BRASS"
-      #define MAIN_MENU_ITEM_1_GCODE "M92E420\nM301P" charSK175_DEFAULT_Kp "I" charSK175_DEFAULT_Ki "D" charSK175_DEFAULT_Kd"\nM906E" E_CURRENT_Aero "\nM500\nM117 SK175|0.50mm|BRASS"
+    #define MAIN_MENU_ITEM_3_DESC "TWNB285|NKL-PL BRASS"
+    #define MAIN_MENU_ITEM_3_GCODE "M891 T12\nM92E439\n" E_CURRENT_TWNB285 "\nM500\nM117 TWNB285|NKL-PL BRASS"
 
-      #define MAIN_MENU_ITEM_2_DESC "SK285|0.50mm|BRASS"
-      #define MAIN_MENU_ITEM_2_GCODE "M92E420\nM301P" charSK285_DEFAULT_Kp "I" charSK285_DEFAULT_Ki "D" charSK285_DEFAULT_Kd "\nM906E" E_CURRENT_Aero "\nM500\nM117 SK285|0.50mm|BRASS"
-    #endif
-    #if DISABLED(TAZ6, Workhorse)
-      #define MAIN_MENU_ITEM_3_DESC "M175v2|0.50mm|CRB CU"
-      #define MAIN_MENU_ITEM_3_GCODE "M92E415\nM301P" charM175_DEFAULT_Kp "I" charM175_DEFAULT_Ki "D" charM175_DEFAULT_Kd "\nM906E" E_CURRENT_BMG "\nM500\nM117 M175v2|0.50mm|CRB CU"
+  #elif defined(TOOLHEAD_Legacy_Universal)
+    #if ANY(MiniV2, Workhorse, TAZPro, TAZProXT, TAZProV2)
+      #define MAIN_MENU_ITEM_2_DESC "M175v2|0.50mm|CRB CU"
+      #define MAIN_MENU_ITEM_2_GCODE "M891 T1\nM92E415\nM301P" charM175_DEFAULT_Kp "I" charM175_DEFAULT_Ki "D" charM175_DEFAULT_Kd "\n" E_CURRENT_BMG "\nM900 K0.05\nM500\nM117 M175v2|0.50mm|CRB CU"
 
-      #define MAIN_MENU_ITEM_4_DESC "SL|0.25mm|NKL-PL CU"
-      #define MAIN_MENU_ITEM_4_GCODE "M92E420\nM301P" charSLSEHE_DEFAULT_Kp "I" charSLSEHE_DEFAULT_Ki "D" charSLSEHE_DEFAULT_Kd "\nM906E" E_CURRENT_Aero "\nM500\nM117 SL|0.25mm|NKL-PL CU"
-      
-      #define MAIN_MENU_ITEM_5_DESC "SE|0.50mm|NKL-PL CU"
-      #define MAIN_MENU_ITEM_5_GCODE "M92E420\nM301P" charSLSEHE_DEFAULT_Kp "I" charSLSEHE_DEFAULT_Ki "D" charSLSEHE_DEFAULT_Kd "\nM906E" E_CURRENT_Aero "\nM500\nM117 SE|0.50mm|NKL-PL CU"
+      #define MAIN_MENU_ITEM_3_DESC "SL|0.25mm|NKL-PL CU"
+      #define MAIN_MENU_ITEM_3_GCODE "M891 T2\nM92E420\nM301P" charSLSEHE_DEFAULT_Kp "I" charSLSEHE_DEFAULT_Ki "D" charSLSEHE_DEFAULT_Kd "\n" E_CURRENT_Aero "\nM900 K0.05\nM500\nM117 SL|0.25mm|NKL-PL CU"
 
-      #define MAIN_MENU_ITEM_6_DESC "HE|0.50mm|HRD STEEL"
-      #define MAIN_MENU_ITEM_6_GCODE "M92E420\nM301P" charSLSEHE_DEFAULT_Kp "I" charSLSEHE_DEFAULT_Ki "D" charSLSEHE_DEFAULT_Kd "\nM906E" E_CURRENT_Aero "\nM500\nM117 HE|0.50mm|HRD STEEL"
+      #define MAIN_MENU_ITEM_4_DESC "SE|0.50mm|NKL-PL CU"
+      #define MAIN_MENU_ITEM_4_GCODE "M891 T3\nM92E420\nM301P" charSLSEHE_DEFAULT_Kp "I" charSLSEHE_DEFAULT_Ki "D" charSLSEHE_DEFAULT_Kd "\n" E_CURRENT_Aero "\nM900 K0.05\nM500\nM117 SE|0.50mm|NKL-PL CU"
 
-      #define MAIN_MENU_ITEM_7_DESC "HS|0.80mm|HRD STEEL"
-      #define MAIN_MENU_ITEM_7_GCODE "M92E420\nM301P" charHSHSPLUS_DEFAULT_Kp "I" charHSHSPLUS_DEFAULT_Ki "D" charHSHSPLUS_DEFAULT_Kd "\nM906E" E_CURRENT_Aero "\nM500\nM117 HS|0.80mm|HRD STEEL"
+      #define MAIN_MENU_ITEM_5_DESC "HE|0.50mm|HRD STEEL"
+      #define MAIN_MENU_ITEM_5_GCODE "M891 T4\nM92E420\nM301P" charSLSEHE_DEFAULT_Kp "I" charSLSEHE_DEFAULT_Ki "D" charSLSEHE_DEFAULT_Kd "\n" E_CURRENT_Aero "\nM900 K0.05\nM500\nM117 HE|0.50mm|HRD STEEL"
 
-      #define MAIN_MENU_ITEM_8_DESC "HS+|1.20mm|HRD STEEL"
-      #define MAIN_MENU_ITEM_8_GCODE "M92E420\nM301P" charHSHSPLUS_DEFAULT_Kp "I" charHSHSPLUS_DEFAULT_Ki "D" charHSHSPLUS_DEFAULT_Kd "\nM906E" E_CURRENT_Aero "\nM500\nM117 HS+|1.20mm|HRD STEEL"
+      #define MAIN_MENU_ITEM_6_DESC "HS|0.80mm|HRD STEEL"
+      #define MAIN_MENU_ITEM_6_GCODE "M891 T5\nM92E420\nM301P" charHSHSPLUS_DEFAULT_Kp "I" charHSHSPLUS_DEFAULT_Ki "D" charHSHSPLUS_DEFAULT_Kd "\n" E_CURRENT_Aero "\nM900 K0.04\nM500\nM117 HS|0.80mm|HRD STEEL"
 
-      #define MAIN_MENU_ITEM_9_DESC "H175|0.50mm|NKL-PL CU"
-      #define MAIN_MENU_ITEM_9_GCODE "M92E409\nM301P" charH175_DEFAULT_Kp "I" charH175_DEFAULT_Ki "D" charH175_DEFAULT_Kd "\nM906E" E_CURRENT_Aero "\nM500\nM117 H175|0.50mm|NKL-PL CU"
-    #else
-      #define MAIN_MENU_ITEM_3_DESC "M175v2|0.50mm|CRB CU"
-      #define MAIN_MENU_ITEM_3_GCODE "M92E415\nM206Y0\nM301P" charM175_DEFAULT_Kp "I" charM175_DEFAULT_Ki "D" charM175_DEFAULT_Kd "\nM907E" E_CURRENT_BMG "\nM412 S1\nM500\nM117 M175v2|0.50mm|CRB CU"
+      #define MAIN_MENU_ITEM_7_DESC "HS+|1.20mm|HRD STEEL"
+      #define MAIN_MENU_ITEM_7_GCODE "M891 T6\nM92E420\nM301P" charHSHSPLUS_DEFAULT_Kp "I" charHSHSPLUS_DEFAULT_Ki "D" charHSHSPLUS_DEFAULT_Kd "\n" E_CURRENT_Aero "\nM900 K0.03\nM500\nM117 HS+|1.20mm|HRD STEEL"
 
-      #define MAIN_MENU_ITEM_4_DESC "SL|0.25mm|NKL-PL CU"
-      #define MAIN_MENU_ITEM_4_GCODE "M92E420\nM206Y0\nM301P" charSLSEHE_DEFAULT_Kp "I" charSLSEHE_DEFAULT_Ki "D" charSLSEHE_DEFAULT_Kd "\nM907E" E_CURRENT_Aero "\nM412 S1\nM500\nM117 SL|0.25mm|NKL-PL CU"
-      
-      #define MAIN_MENU_ITEM_5_DESC "SE|0.50mm|NKL-PL CU"
-      #define MAIN_MENU_ITEM_5_GCODE "M92E420\nM206Y0\nM301P" charSLSEHE_DEFAULT_Kp "I" charSLSEHE_DEFAULT_Ki "D" charSLSEHE_DEFAULT_Kd "\nM907E" E_CURRENT_Aero "\nM412 S1\nM500\nM117 SE|0.50mm|NKL-PL CU"
+      #define MAIN_MENU_ITEM_8_DESC "H175|0.50mm|NKL-PL CU"
+      #define MAIN_MENU_ITEM_8_GCODE "M891 T7\nM92E409\nM301P" charH175_DEFAULT_Kp "I" charH175_DEFAULT_Ki "D" charH175_DEFAULT_Kd "\n" E_CURRENT_Aero "\nM900 K0.05\nM500\nM117 H175|0.50mm|NKL-PL CU"
 
-      #define MAIN_MENU_ITEM_6_DESC "HE|0.50mm|HRD STEEL"
-      #define MAIN_MENU_ITEM_6_GCODE "M92E420\nM206Y0\nM301P" charSLSEHE_DEFAULT_Kp "I" charSLSEHE_DEFAULT_Ki "D" charSLSEHE_DEFAULT_Kd "\nM907E" E_CURRENT_Aero "\nM412 S1\nM500\nM117 HE|0.50mm|HRD STEEL"
+    #elif ANY(Sidekick_289, Sidekick_747)
+      #define MAIN_MENU_ITEM_2_DESC "SK175|0.50mm|BRASS"
+      #define MAIN_MENU_ITEM_2_GCODE "M92E420\nM301P" charSK175_DEFAULT_Kp "I" charSK175_DEFAULT_Ki "D" charSK175_DEFAULT_Kd"\n" E_CURRENT_Aero "\nM900 K0.05\nM500\nM117 SK175|0.50mm|BRASS"
 
-      #define MAIN_MENU_ITEM_7_DESC "HS|0.80mm|HRD STEEL"
-      #define MAIN_MENU_ITEM_7_GCODE "M92E420\nM206Y0\nM301P" charHSHSPLUS_DEFAULT_Kp "I" charHSHSPLUS_DEFAULT_Ki "D" charHSHSPLUS_DEFAULT_Kd "\nM907E" E_CURRENT_Aero "\nM412 S1\nM500\nM117 HS|0.80mm|HRD STEEL"
+      #define MAIN_MENU_ITEM_3_DESC "SK285|0.50mm|BRASS"
+      #define MAIN_MENU_ITEM_3_GCODE "M92E420\nM301P" charSK285_DEFAULT_Kp "I" charSK285_DEFAULT_Ki "D" charSK285_DEFAULT_Kd "\n" E_CURRENT_Aero "\nM900 K0.05\nM500\nM117 SK285|0.50mm|BRASS"
 
-      #define MAIN_MENU_ITEM_8_DESC "HS+|1.20mm|HRD STEEL"
-      #define MAIN_MENU_ITEM_8_GCODE "M92E420\nM206Y0\nM301P" charHSHSPLUS_DEFAULT_Kp "I" charHSHSPLUS_DEFAULT_Ki "D" charHSHSPLUS_DEFAULT_Kd "\nM907E" E_CURRENT_Aero "\nM412 S1\nM500\nM117 HS+|1.20mm|HRD STEEL"
+      #define MAIN_MENU_ITEM_4_DESC "M175v2|0.50mm|CRB CU"
+      #define MAIN_MENU_ITEM_4_GCODE "M891 T1\nM92E415\nM301P" charM175_DEFAULT_Kp "I" charM175_DEFAULT_Ki "D" charM175_DEFAULT_Kd "\n" E_CURRENT_BMG "\nM900 K0.05\nM500\nM117 M175v2|0.50mm|CRB CU"
 
-      #define MAIN_MENU_ITEM_9_DESC "H175|0.50mm|NKL-PL CU"
-      #define MAIN_MENU_ITEM_9_GCODE "M92E409\nM206Y0\nM301P" charH175_DEFAULT_Kp "I" charH175_DEFAULT_Ki "D" charH175_DEFAULT_Kd "\nM906E" E_CURRENT_Aero "\nM412 S1\nM500\nM117 H175|0.50mm|NKL-PL CU"
-    #endif
-    #if defined(TAZ6)
-      #define MAIN_MENU_ITEM_1_DESC "Standard|0.5mm"
-      #define MAIN_MENU_ITEM_1_GCODE "M92E833\nM206Y4\nM301P" charTAZ6_STD_DEFAULT_Kp "I" charTAZ6_STD_DEFAULT_Ki "D" charTAZ6_STD_DEFAULT_Kd "\nM907E" E_CURRENT_Std "\nM412 S0\nM500\nM117 Standard|0.5mm"
+      #define MAIN_MENU_ITEM_5_DESC "SL|0.25mm|NKL-PL CU"
+      #define MAIN_MENU_ITEM_5_GCODE "M891 T2\nM92E420\nM301P" charSLSEHE_DEFAULT_Kp "I" charSLSEHE_DEFAULT_Ki "D" charSLSEHE_DEFAULT_Kd "\n" E_CURRENT_Aero "\nM900 K0.05\nM500\nM117 SL|0.25mm|NKL-PL CU"
+
+      #define MAIN_MENU_ITEM_6_DESC "SE|0.50mm|NKL-PL CU"
+      #define MAIN_MENU_ITEM_6_GCODE "M891 T3\nM92E420\nM301P" charSLSEHE_DEFAULT_Kp "I" charSLSEHE_DEFAULT_Ki "D" charSLSEHE_DEFAULT_Kd "\n" E_CURRENT_Aero "\nM900 K0.05\nM500\nM117 SE|0.50mm|NKL-PL CU"
+
+      #define MAIN_MENU_ITEM_7_DESC "HE|0.50mm|HRD STEEL"
+      #define MAIN_MENU_ITEM_7_GCODE "M891 T4\nM92E420\nM301P" charSLSEHE_DEFAULT_Kp "I" charSLSEHE_DEFAULT_Ki "D" charSLSEHE_DEFAULT_Kd "\n" E_CURRENT_Aero "\nM900 K0.05\nM500\nM117 HE|0.50mm|HRD STEEL"
+
+      #define MAIN_MENU_ITEM_8_DESC "HS|0.80mm|HRD STEEL"
+      #define MAIN_MENU_ITEM_8_GCODE "M891 T5\nM92E420\nM301P" charHSHSPLUS_DEFAULT_Kp "I" charHSHSPLUS_DEFAULT_Ki "D" charHSHSPLUS_DEFAULT_Kd "\n" E_CURRENT_Aero "\nM900 K0.04\nM500\nM117 HS|0.80mm|HRD STEEL"
+
+      #define MAIN_MENU_ITEM_9_DESC "HS+|1.20mm|HRD STEEL"
+      #define MAIN_MENU_ITEM_9_GCODE "M891 T6\nM92E420\nM301P" charHSHSPLUS_DEFAULT_Kp "I" charHSHSPLUS_DEFAULT_Ki "D" charHSHSPLUS_DEFAULT_Kd "\n" E_CURRENT_Aero "\nM900 K0.03\nM500\nM117 HS+|1.20mm|HRD STEEL"
+
+      #define MAIN_MENU_ITEM_10_DESC "H175|0.50mm|NKL-PL CU"
+      #define MAIN_MENU_ITEM_10_GCODE "M891 T7\nM92E409\nM301P" charH175_DEFAULT_Kp "I" charH175_DEFAULT_Ki "D" charH175_DEFAULT_Kd "\n" E_CURRENT_Aero "\nM900 K0.05\nM500\nM117 H175|0.50mm|NKL-PL CU"
     #endif
   #endif
 #endif
@@ -4451,6 +4541,7 @@
                                           // row. By default idle() is profiled so this shows how "idle" the processor is.
                                           // See class CodeProfiler.
   //#define MAX7219_DEBUG_MULTISTEPPING 6 // Show multi-stepping 1 to 128 on this LED matrix row.
+  //#define MAX7219_DEBUG_SLOWDOWN      6 // Count (mod 16) how many times SLOWDOWN has reduced print speed.
 #endif
 
 /**
@@ -4475,13 +4566,17 @@
 #endif
 
 /**
- * WiFi Support (Espressif ESP32 WiFi)
+ * Native ESP32 board with WiFi or add-on ESP32 WiFi-101 module
  */
-//#define WIFISUPPORT         // Marlin embedded WiFi management
+//#define WIFISUPPORT         // Marlin embedded WiFi management. Not needed for simple WiFi serial port.
 //#define ESP3D_WIFISUPPORT   // ESP3D Library WiFi management (https://github.com/luc-github/ESP3DLib)
 
-#if ANY(WIFISUPPORT, ESP3D_WIFISUPPORT)
-  //#define WEBSUPPORT          // Start a webserver (which may include auto-discovery)
+/**
+ * Extras for an ESP32-based motherboard with WIFISUPPORT
+ * These options don't apply to add-on WiFi modules based on ESP32 WiFi101.
+ */
+#if ENABLED(WIFISUPPORT)
+  //#define WEBSUPPORT          // Start a webserver (which may include auto-discovery) using SPIFFS
   //#define OTASUPPORT          // Support over-the-air firmware updates
   //#define WIFI_CUSTOM_COMMAND // Accept feature config commands (e.g., WiFi ESP3D) from the host
 
@@ -4663,10 +4758,3 @@
 
 // Report uncleaned reset reason from register r2 instead of MCUSR. Supported by Optiboot on AVR.
 //#define OPTIBOOT_RESET_REASON
-
-// Advanced configurations of the fixed-time-based control.
-#ifdef FXDTICTRL
-  #define FXDTICTRL_BATCH_SIZE 240            // Batch size for trajectory generation.
-  #define FXDTICTRL_WINDOW_SIZE 412           // Window size for Ulendo FBS.
-  #define FXDTICTRL_TS 0.001f                 // Time step for trajectory generation.
-#endif

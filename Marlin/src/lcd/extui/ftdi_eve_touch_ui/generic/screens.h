@@ -127,6 +127,7 @@ enum {
 #include "confirm_start_print_dialog_box.h"
 #include "confirm_abort_print_dialog_box.h"
 #include "confirm_user_request_alert_box.h"
+#include "end_print_screen.h"
 #include "filament_prompt_box.h"
 #include "touch_calibration_screen.h"
 #include "touch_registers_screen.h"
@@ -144,6 +145,7 @@ enum {
 #include "endstop_state_screen.h"
 #include "display_tuning_screen.h"
 #include "media_player_screen.h"
+#include "flow_percent_screen.h"
 
 #if ENABLED(PRINTCOUNTER)
   #include "statistics_screen.h"

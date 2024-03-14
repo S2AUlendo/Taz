@@ -22,6 +22,7 @@
 #pragma once
 
 #include "../inc/MarlinConfig.h"
+#include "../module/temperature.h"
 
 #if HAS_MEDIA
 
@@ -31,7 +32,10 @@ extern const char M23_STR[], M24_STR[];
   #if ENABLED(SDSORT_DYNAMIC_RAM)
     #define SD_RESORT 1
   #endif
-  #if FOLDER_SORTING || ENABLED(SDSORT_GCODE)
+  #ifndef SDSORT_FOLDERS
+    #define SDSORT_FOLDERS 0
+  #endif
+  #if SDSORT_FOLDERS || ENABLED(SDSORT_GCODE)
     #define HAS_FOLDER_SORTING 1
   #endif
 #endif
@@ -84,6 +88,7 @@ typedef struct {
 } card_flags_t;
 
 enum ListingFlags : uint8_t { LS_LONG_FILENAME, LS_ONLY_BIN, LS_TIMESTAMP };
+enum SortFlag : int8_t { AS_REV = -1, AS_OFF, AS_FWD, AS_ALSO_REV };
 
 #if ENABLED(AUTO_REPORT_SD_STATUS)
   #include "../libs/autoreport.h"
@@ -199,8 +204,8 @@ public:
     static void presort();
     static void selectFileByIndexSorted(const int16_t nr);
     #if ENABLED(SDSORT_GCODE)
-      FORCE_INLINE static void setSortOn(bool b)        { sort_alpha   = b; presort(); }
-      FORCE_INLINE static void setSortFolders(int i)    { sort_folders = i; presort(); }
+      FORCE_INLINE static void setSortOn(const SortFlag f) { sort_alpha = (f == AS_ALSO_REV) ? AS_REV : f; presort(); }
+      FORCE_INLINE static void setSortFolders(const int8_t i) { sort_folders = i; presort(); }
       //FORCE_INLINE static void setSortReverse(bool b) { sort_reverse = b; }
     #endif
   #else
@@ -232,9 +237,9 @@ public:
   static bool eof()              { return getIndex() >= getFileSize(); }
 
   // File data operations
-  static int16_t get()                            { int16_t out = (int16_t)file.read(); sdpos = file.curPosition(); return out; }
-  static int16_t read(void *buf, uint16_t nbyte)  { return file.isOpen() ? file.read(buf, nbyte) : -1; }
-  static int16_t write(void *buf, uint16_t nbyte) { return file.isOpen() ? file.write(buf, nbyte) : -1; }
+  static int16_t get()                            { thermalManager.pause_heaters(true); int16_t out = (int16_t)file.read(); sdpos = file.curPosition(); thermalManager.pause_heaters(false); return out; }
+  static int16_t read(void *buf, uint16_t nbyte)  { thermalManager.pause_heaters(true); int16_t out = file.isOpen() ? file.read(buf, nbyte) : -1; thermalManager.pause_heaters(false); return out;}
+  static int16_t write(void *buf, uint16_t nbyte) { thermalManager.pause_heaters(true); int16_t out = file.isOpen() ? file.write(buf, nbyte) : -1; thermalManager.pause_heaters(false); return out;}
   static void setIndex(const uint32_t index)      { file.seekSet((sdpos = index)); }
 
   // TODO: rename to diskIODriver()
@@ -272,12 +277,12 @@ private:
   #if ENABLED(SDCARD_SORT_ALPHA)
     static int16_t sort_count;    // Count of sorted items in the current directory
     #if ENABLED(SDSORT_GCODE)
-      static bool sort_alpha;     // Flag to enable / disable the feature
-      static int sort_folders;    // Folder sorting before/none/after
+      static SortFlag sort_alpha; // Sorting: REV, OFF, FWD
+      static int8_t sort_folders; // Folder sorting before/none/after
       //static bool sort_reverse; // Flag to enable / disable reverse sorting
     #endif
 
-    // By default the sort index is static
+    // By default the sort index is statically allocated
     #if ENABLED(SDSORT_DYNAMIC_RAM)
       static uint8_t *sort_order;
     #else

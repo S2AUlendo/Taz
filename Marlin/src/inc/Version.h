@@ -42,7 +42,7 @@
  * version was tagged.
  */
 #ifndef STRING_DISTRIBUTION_DATE
-  #define STRING_DISTRIBUTION_DATE "2023-08-03"
+  #define STRING_DISTRIBUTION_DATE "2024-01-17"
 #endif
 
 /**
@@ -119,4 +119,5 @@
 #else
   #define USB_DEVICE_PRODUCT_NAME         MACHINE_NAME
 #endif
-#define USB_DEVICE_SERIAL_NAME            "123985739853"
+//#define USB_DEVICE_SERIAL_NAME            "123985739853"
+#define USB_DEVICE_SERIAL_SAM3X8E_DYNAMIC

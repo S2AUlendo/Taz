@@ -54,7 +54,7 @@ void AdvancedSettingsMenu::onRedraw(draw_mode_t what) {
       #define ACCELERATION_POS        BTN_POS(2,2), BTN_SIZE(1,1)
       #define ENDSTOPS_POS            BTN_POS(1,5), BTN_SIZE(1,1)
       #define JERK_POS                BTN_POS(2,3), BTN_SIZE(1,1)
-      #define CASE_LIGHT_POS          BTN_POS(1,6), BTN_SIZE(1,1)
+      #define FLOW_POS                BTN_POS(1,6), BTN_SIZE(1,1)
       #define BACKLASH_POS            BTN_POS(2,4), BTN_SIZE(1,1)
       #define OFFSETS_POS             BTN_POS(1,4), BTN_SIZE(1,1)
       #define TMC_HOMING_THRS_POS     BTN_POS(2,6), BTN_SIZE(1,1)
@@ -67,7 +67,7 @@ void AdvancedSettingsMenu::onRedraw(draw_mode_t what) {
       #define GRID_COLS 3
       #define GRID_ROWS 6
       #define ZPROBE_ZOFFSET_POS      BTN_POS(1,1), BTN_SIZE(1,1)
-      #define CASE_LIGHT_POS          BTN_POS(1,4), BTN_SIZE(1,1)
+      #define FLOW_POS                BTN_POS(1,4), BTN_SIZE(1,1)
       #define STEPS_PER_MM_POS        BTN_POS(2,1), BTN_SIZE(1,1)
       #define TMC_CURRENT_POS         BTN_POS(3,1), BTN_SIZE(1,1)
       #define TMC_HOMING_THRS_POS     BTN_POS(3,2), BTN_SIZE(1,1)
@@ -89,14 +89,16 @@ void AdvancedSettingsMenu::onRedraw(draw_mode_t what) {
     cmd.colors(normal_btn)
        .font(Theme::font_medium)
       .enabled(ENABLED(HAS_BED_PROBE))
-      .tag(2) .button(ZPROBE_ZOFFSET_POS,     GET_TEXT_F(MSG_ZPROBE_ZOFFSET))
-      .enabled(ENABLED(CASE_LIGHT_ENABLE))
-      .tag(16).button(CASE_LIGHT_POS,         GET_TEXT_F(MSG_CASE_LIGHT))
+      .tag(2) .button(ZPROBE_ZOFFSET_POS,     GET_TEXT_F(MSG_ZOFFSET))
+      .tag(16).button(FLOW_POS,               GET_TEXT_F(MSG_FLOW))
       .tag(3) .button(STEPS_PER_MM_POS,       GET_TEXT_F(MSG_STEPS_PER_MM))
       .enabled(ENABLED(HAS_TRINAMIC_CONFIG))
       .tag(13).button(TMC_CURRENT_POS,        GET_TEXT_F(MSG_TMC_CURRENT))
-      .enabled(ENABLED(SENSORLESS_HOMING))
-      .tag(14).button(TMC_HOMING_THRS_POS,    GET_TEXT_F(MSG_TMC_HOMING_THRS))
+      #if ENABLED(SENSORLESS_HOMING)
+        .tag(14).button(TMC_HOMING_THRS_POS,  GET_TEXT_F(MSG_TMC_HOMING_THRS))
+      #else
+        .tag(17).button(TMC_HOMING_THRS_POS,  GET_TEXT_F(MSG_CLEAN_NOZZLE))
+      #endif
       .enabled(ENABLED(HAS_MULTI_HOTEND))
       .tag(4) .button(OFFSETS_POS,            GET_TEXT_F(MSG_OFFSETS_MENU))
       .enabled(ANY(LIN_ADVANCE, FILAMENT_RUNOUT_SENSOR))
@@ -144,9 +146,8 @@ bool AdvancedSettingsMenu::onTouchEnd(uint8_t tag) {
     case 14: GOTO_SCREEN(StepperBumpSensitivityScreen); break;
     #endif
     case 15: GOTO_SCREEN(DisplayTuningScreen); break;
-    #if ENABLED(CASE_LIGHT_ENABLE)
-    case 16: GOTO_SCREEN(CaseLightScreen); break;
-    #endif
+    case 16: GOTO_SCREEN(FlowPercentScreen);   break;
+    case 17: injectCommands(F(CLEAN_SCRIPT));  break;
     default: return false;
   }
   return true;

@@ -24,47 +24,59 @@
 #include "../core/types.h"
 
 typedef enum FXDTICtrlMode : uint8_t {
-  ftMotionMode_DISABLED   =  0U,
-  ftMotionMode_ENABLED    =  1U,
-  //ftMotionMode_ULENDO_FBS = 2U,
-  ftMotionMode_ZV         = 10U,
-  ftMotionMode_ZVD        = 11U,
-  ftMotionMode_EI         = 12U,
-  ftMotionMode_2HEI       = 13U,
-  ftMotionMode_3HEI       = 14U,
-  ftMotionMode_MZV        = 15U,
-  //ftMotionMode_DISCTF   = 20U
+  ftMotionMode_DISABLED   =  0, // Standard Motion
+  ftMotionMode_ENABLED    =  1  // Time-Based Motion
 } ftMotionMode_t;
 
-enum dynFreqMode_t : uint8_t {
-  dynFreqMode_DISABLED   = 0U,
-  dynFreqMode_Z_BASED    = 1U,
-  dynFreqMode_MASS_BASED = 2U
-};
+typedef enum FXDTICtrlCmpnstr : uint8_t {
+  ftMotionCmpnstr_NONE       = 0, // No compensator
+  ftMotionCmpnstr_ZV         = 1, // Zero Vibration
+  ftMotionCmpnstr_ZVD        = 2, // Zero Vibration and Derivative
+  ftMotionCmpnstr_ZVDD       = 3, // Zero Vibration, Derivative, and Double Derivative
+  ftMotionCmpnstr_ZVDDD      = 4, // Zero Vibration, Derivative, Double Derivative, and Triple Derivative
+  ftMotionCmpnstr_EI         = 5, // Extra-Intensive
+  ftMotionCmpnstr_2HEI       = 6, // 2-Hump Extra-Intensive
+  ftMotionCmpnstr_3HEI       = 7, // 3-Hump Extra-Intensive
+  ftMotionCmpnstr_MZV        = 8  // Modified Zero Vibration
+} ftMotionCmpnstr_t;
 
-enum stepDirState_t : uint8_t {
-  stepDirState_NOT_SET = 0U,
-  stepDirState_POS     = 1U,
-  stepDirState_NEG     = 2U
-};
+typedef enum FXDTICtrlTrajGenMode : uint8_t {
+  trajGenMode_NONE       =  0U,
+  trajGenMode_SWEEPC_X   =  1U,
+  trajGenMode_SWEEPC_Y   =  2U,
+  trajGenMode_ABORT      = 99U,
+} ftMotionTrajGenMode_t;
+
+typedef struct FXDTICtrlTrajGenConfig {
+  ftMotionTrajGenMode_t mode = trajGenMode_NONE;
+  float f0 = 0.0f,
+        f1 = 0.0f,
+        dfdt = 0.0f,
+        a = 0.0f,
+        pcws_ti[6] = {0.0f},
+        k1 = 0.0f,
+        k2 = 0.0f,
+        step_ti = 0.0f,
+        step_a = 0.0f,
+        dly1_ti = 0.0f,
+        dly2_ti = 0.0f,
+        dly3_ti = 0.0f,
+        step_a_x_0p5 = 0.0f,
+        step_a_x_step_ti_x_step_ti = 0.0f,
+        step_ti_x_2 = 0.0f,
+        step_ti_x_3 = 0.0f,
+        step_ti_x_4 = 0.0f;
+} ftMotionTrajGenConfig_t;
 
 typedef struct XYZEarray<float, FTM_WINDOW_SIZE> xyze_trajectory_t;
 typedef struct XYZEarray<float, FTM_BATCH_SIZE> xyze_trajectoryMod_t;
 
-typedef struct XYZEval<stepDirState_t> xyze_stepDir_t;
-
 enum {
   LIST_N(DOUBLE(LOGICAL_AXES),
     FT_BIT_DIR_E, FT_BIT_STEP_E,
-    FT_BIT_DIR_X, FT_BIT_STEP_X,
-    FT_BIT_DIR_Y, FT_BIT_STEP_Y,
-    FT_BIT_DIR_Z, FT_BIT_STEP_Z,
-    FT_BIT_DIR_I, FT_BIT_STEP_I,
-    FT_BIT_DIR_J, FT_BIT_STEP_J,
-    FT_BIT_DIR_K, FT_BIT_STEP_K,
-    FT_BIT_DIR_U, FT_BIT_STEP_U,
-    FT_BIT_DIR_V, FT_BIT_STEP_V,
-    FT_BIT_DIR_W, FT_BIT_STEP_W
+    FT_BIT_DIR_X, FT_BIT_STEP_X, FT_BIT_DIR_Y, FT_BIT_STEP_Y, FT_BIT_DIR_Z, FT_BIT_STEP_Z,
+    FT_BIT_DIR_I, FT_BIT_STEP_I, FT_BIT_DIR_J, FT_BIT_STEP_J, FT_BIT_DIR_K, FT_BIT_STEP_K,
+    FT_BIT_DIR_U, FT_BIT_STEP_U, FT_BIT_DIR_V, FT_BIT_STEP_V, FT_BIT_DIR_W, FT_BIT_STEP_W
   ),
   FT_BIT_COUNT
 };

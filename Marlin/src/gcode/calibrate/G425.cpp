@@ -33,9 +33,12 @@
 #include "../../lcd/marlinui.h"
 #include "../../module/motion.h"
 #include "../../module/planner.h"
-#include "../../module/tool_change.h"
 #include "../../module/endstops.h"
 #include "../../feature/bedlevel/bedlevel.h"
+
+#if HAS_MULTI_HOTEND
+  #include "../../module/tool_change.h"
+#endif
 
 #if !AXIS_CAN_CALIBRATE(X)
   #undef CALIBRATION_MEASURE_LEFT
@@ -830,6 +833,8 @@ inline void calibrate_all() {
   // Do a slow and precise calibration of the toolheads
   calibrate_all_toolheads(m, CALIBRATION_MEASUREMENT_UNCERTAIN);
 
+  current_position.z = current_position.z + 5;
+  calibration_move();         // Move up before going to center, to clear mag bed handles.
   current_position.x = X_CENTER;
   calibration_move();         // Park nozzle away from calibration object
 }
