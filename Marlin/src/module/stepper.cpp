@@ -1493,6 +1493,7 @@ void Stepper::isr() {
 
   #if ENABLED(FT_MOTION)
     const bool using_ftMotion = ftMotion.cfg.mode;
+	  static uint32_t ftMotion_nextAuxISR = 0U;  // Storage for the next ISR of the auxilliary tasks.
   #else
     constexpr bool using_ftMotion = false;
   #endif
@@ -1511,10 +1512,16 @@ void Stepper::isr() {
         if (!nextMainISR) {               // Main ISR is ready to fire during this iteration?
           nextMainISR = FTM_MIN_TICKS;    // Set to minimum interval (a limit on the top speed)
           ftMotion_stepper();             // Run FTM Stepping
-        }
-        interval = nextMainISR;           // Interval is either some old nextMainISR or FTM_MIN_TICKS
-        nextMainISR = 0;                  // For FT Motion fire again ASAP
-      }
+          // Define 2.5 msec task for auxilliary functions.
+          if (!ftMotion_nextAuxISR) {
+            TERN_(BABYSTEPPING, if (babystep.has_steps()) babystepping_isr());
+            ftMotion_nextAuxISR = 0.0025f * (STEPPER_TIMER_RATE);
+          }
+      	}
+        interval = _MIN(nextMainISR, ftMotion_nextAuxISR);
+        nextMainISR -= interval;
+        ftMotion_nextAuxISR -= interval;
+	    }
 
     #endif
 
@@ -3532,9 +3539,6 @@ void Stepper::report_positions() {
       I_APPLY_STEP(!STEP_STATE_I, false), J_APPLY_STEP(!STEP_STATE_J, false), K_APPLY_STEP(!STEP_STATE_K, false),
       U_APPLY_STEP(!STEP_STATE_U, false), V_APPLY_STEP(!STEP_STATE_V, false), W_APPLY_STEP(!STEP_STATE_W, false)
     );
-
-    // Also handle babystepping here
-    TERN_(BABYSTEPPING, if (babystep.has_steps()) babystepping_isr());
 
   } // Stepper::ftMotion_stepper
 
