@@ -799,18 +799,18 @@ void Endstops::update() {
 
   // Signal, after validation, if an endstop limit is pressed or not
 
+  bool x_moving, x_neg_dir;
   #if HAS_X_AXIS
-    #if ENABLED(FT_MOTION)
+    if (ftMotion.cfg.mode) {
       const bool x_moving_pos = ftMotion.axis_moving_pos(X_AXIS_HEAD);
-      const bool x_moving_neg = ftMotion.axis_moving_neg(X_AXIS_HEAD);
-      #define X_MOVE_TEST x_moving_pos || x_moving_neg
-      #define X_NEG_DIR_TEST x_moving_neg
-    #else
-      #define X_MOVE_TEST stepper.axis_is_moving(X_AXIS)
-      #define X_NEG_DIR_TEST !stepper.motor_direction(X_AXIS_HEAD)
-    #endif
-    if (X_MOVE_TEST) {
-      if (X_NEG_DIR_TEST) { // -direction
+      x_neg_dir = ftMotion.axis_moving_neg(X_AXIS_HEAD);
+      x_moving = x_moving_pos || x_neg_dir;
+    } else {
+      x_neg_dir = !stepper.motor_direction(X_AXIS_HEAD);
+      x_moving = stepper.axis_is_moving(X_AXIS);
+    }
+    if (x_moving) {
+      if (x_neg_dir) { // -direction
         #if HAS_X_MIN_STATE
           PROCESS_ENDSTOP_X(MIN);
           #if   CORE_DIAG(XY, Y, MIN)
@@ -841,18 +841,18 @@ void Endstops::update() {
     }
   #endif // HAS_X_AXIS
 
+  bool y_moving, y_neg_dir;
   #if HAS_Y_AXIS
-    #if ENABLED(FT_MOTION)
+    if (ftMotion.cfg.mode) {
       const bool y_moving_pos = ftMotion.axis_moving_pos(Y_AXIS_HEAD);
-      const bool y_moving_neg = ftMotion.axis_moving_neg(Y_AXIS_HEAD);
-      #define Y_MOVE_TEST y_moving_pos || y_moving_neg
-      #define Y_NEG_DIR_TEST y_moving_neg
-    #else
-      #define Y_MOVE_TEST stepper.axis_is_moving(Y_AXIS)
-      #define Y_NEG_DIR_TEST !stepper.motor_direction(Y_AXIS_HEAD)
-    #endif
-    if (Y_MOVE_TEST) {
-      if (Y_NEG_DIR_TEST) { // -direction
+      y_neg_dir = ftMotion.axis_moving_neg(Y_AXIS_HEAD);
+      y_moving = y_moving_pos || y_neg_dir;
+    } else {
+      y_neg_dir = !stepper.motor_direction(Y_AXIS_HEAD);
+      y_moving = stepper.axis_is_moving(Y_AXIS);
+    }
+    if (y_moving) {
+      if (y_neg_dir) { // -direction
         #if HAS_Y_MIN_STATE
           PROCESS_ENDSTOP_Y(MIN);
           #if   CORE_DIAG(XY, X, MIN)
@@ -883,18 +883,18 @@ void Endstops::update() {
     }
   #endif // HAS_Y_AXIS
 
+  bool z_moving, z_neg_dir;
   #if HAS_Z_AXIS
-    #if ENABLED(FT_MOTION)
+    if (ftMotion.cfg.mode) {
       const bool z_moving_pos = ftMotion.axis_moving_pos(Z_AXIS_HEAD);
-      const bool z_moving_neg = ftMotion.axis_moving_neg(Z_AXIS_HEAD);
-      #define Z_MOVE_TEST z_moving_pos || z_moving_neg
-      #define Z_NEG_DIR_TEST z_moving_neg
-    #else
-      #define Z_MOVE_TEST stepper.axis_is_moving(Z_AXIS)
-      #define Z_NEG_DIR_TEST !stepper.motor_direction(Z_AXIS_HEAD)
-    #endif
-    if (Z_MOVE_TEST) {
-      if (Z_NEG_DIR_TEST) { // Z -direction. Gantry down, bed up.
+      z_neg_dir = ftMotion.axis_moving_neg(Z_AXIS_HEAD);
+      z_moving = z_moving_pos || z_neg_dir;
+    } else {
+      z_neg_dir = !stepper.motor_direction(Z_AXIS_HEAD);
+      z_moving = stepper.axis_is_moving(Z_AXIS);
+    }
+    if (z_moving) {
+      if (z_neg_dir) { // -direction
         #if HAS_Z_MIN_STATE
           // If the Z_MIN_PIN is being used for the probe there's no
           // separate Z_MIN endstop. But a Z endstop could be wired
