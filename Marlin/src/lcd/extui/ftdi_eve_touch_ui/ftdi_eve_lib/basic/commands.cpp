@@ -21,6 +21,7 @@
  ****************************************************************************/
 
 #include "ftdi_basic.h"
+#include "../../../../../MarlinCore.h"
 
 #ifdef FTDI_BASIC
 
@@ -234,10 +235,12 @@ uint32_t CLCD::CommandFifo::command_write_ptr = 0xFFFFFFFFul;
 #endif
 
 void CLCD::CommandFifo::cmd(uint32_t cmd32) {
+  if (millis() - last_idle_update_ti > 20) {idle();}
   write((void*)&cmd32, sizeof(uint32_t));
 }
 
 void CLCD::CommandFifo::cmd(void *data, uint16_t len) {
+  if (millis() - last_idle_update_ti > 20) {idle();}
   write(data, len);
 }
 

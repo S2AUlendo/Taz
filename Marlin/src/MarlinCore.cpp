@@ -753,7 +753,13 @@ inline void manage_inactivity(const bool no_stepper_sleep=false) {
  *  - Update the Průša MMU2
  *  - Handle Joystick jogging
  */
+
+millis_t last_idle_update_ti = 0;
+
 void idle(const bool no_stepper_sleep/*=false*/) {
+
+  last_idle_update_ti = millis();
+  
   #ifdef MAX7219_DEBUG_PROFILE
     CodeProfiler idle_profiler;
   #endif
